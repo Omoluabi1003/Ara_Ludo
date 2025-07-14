@@ -1,0 +1,119 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+h1 {
+    color: #0056b3;
+}
+
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(15, 40px);
+    grid-template-rows: repeat(15, 40px);
+    border: 3px solid #333;
+    background-color: #fff;
+    position: relative;
+}
+
+.cell {
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Player Homes */
+.home-red { background-color: #ffdddd; grid-area: 1 / 1 / 7 / 7; }
+.home-green { background-color: #ddffdd; grid-area: 1 / 10 / 7 / 16; }
+.home-blue { background-color: #ddddff; grid-area: 10 / 1 / 16 / 7; }
+.home-yellow { background-color: #ffffdd; grid-area: 10 / 10 / 16 / 16; }
+
+/* Path */
+.path { background-color: #f8f9fa; }
+.path.red-start { background-color: #ffcccc; }
+.path.green-start { background-color: #ccffcc; }
+.path.blue-start { background-color: #ccccff; }
+.path.yellow-start { background-color: #ffffcc; }
+
+/* Safe Spots */
+.safe { background-color: #d4edda; }
+
+/* Center Goal */
+.goal { background-color: #ffd700; grid-area: 7 / 7 / 10 / 10; }
+
+/* Pieces */
+.piece {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.red-piece { background-color: #d9534f; }
+.green-piece { background-color: #5cb85c; }
+.blue-piece { background-color: #428bca; }
+.yellow-piece { background-color: #f0ad4e; }
+
+.piece:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+#controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#result {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+#status {
+    font-size: 16px;
+    color: #555;
+    min-height: 50px;
+}

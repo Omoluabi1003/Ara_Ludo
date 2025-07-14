@@ -2,7 +2,9 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open('ara-ludo').then((cache) => cache.addAll([
       '/',
-      '/index.html'
+      '/index.html',
+      '/styles.css',
+      '/script.js'
     ])),
   );
 });
