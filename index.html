@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ara Ludo by Omoluabi Productions</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; }
+        #board { display: grid; grid-template-columns: repeat(15, 30px); grid-template-rows: repeat(15, 30px); margin: 20px auto; border: 2px solid black; }
+        .cell { border: 1px solid #ccc; background: white; }
+        .home-red { background: red; color: white; }
+        .home-green { background: green; color: white; }
+        .home-yellow { background: yellow; color: black; }
+        .home-blue { background: blue; color: white; }
+        .path { background: lightblue; }
+        .safe { background: lightgreen; }
+        .piece { position: absolute; width: 20px; height: 20px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 12px; }
+        .red-piece { background: red; color: white; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Ara Ludo (PWA Demo)</h1>
+    <div id="board"></div>
+    <button id="roll">Roll Dice</button>
+    <p id="result"></p>
+    <p id="status">Your turn! Roll to start.</p>
+
+    <script>
+        const boardSize = 15; // Standard Ludo is 15x15 grid
+        const board = document.getElementById('board');
+        const rollBtn = document.getElementById('roll');
+        const result = document.getElementById('result');
+        const status = document.getElementById('status');
+
+        // Simplified positions (0-51 path, homes at corners)
+        const pathPositions = []; // Array of {x, y} for path
+        let redPieces = [{pos: -1, elem: null}, {pos: -1, elem: null}, {pos: -1, elem: null}, {pos: -1, elem: null}]; // Start in home
+
+        // Build board grid
+        for (let i = 0; i < boardSize * boardSize; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            // Add classes for homes, paths, etc. (simplified - you'd map real positions)
+            if (i < 6*boardSize) cell.classList.add('home-red'); // Top-left home example
+            board.appendChild(cell);
+        }
+
+        // Create pieces
+        redPieces.forEach((p, idx) => {
+            const piece = document.createElement('div');
+            piece.classList.add('piece', 'red-piece');
+            piece.textContent = `R${idx+1}`;
+            board.appendChild(piece);
+            p.elem = piece;
+            updatePiecePosition(p);
+        });
+
+        function updatePiecePosition(piece) {
+            if (piece.pos === -1) {
+                piece.elem.style.display = 'none'; // In home
+            } else {
+                // Map pos to grid x,y (simplified linear mapping)
+                const x = piece.pos % boardSize;
+                const y = Math.floor(piece.pos / boardSize);
+                piece.elem.style.left = `${x * 30 + 5}px`;
+                piece.elem.style.top = `${y * 30 + 5}px`;
+                piece.elem.style.display = 'block';
+            }
+        }
+
+        rollBtn.addEventListener('click', () => {
+            const dice = Math.floor(Math.random() * 6) + 1;
+            result.textContent = `You rolled: ${dice}`;
+            // Find a movable piece (simple: first in home if 6, or first on board)
+            const piece = redPieces.find(p => (p.pos === -1 && dice === 6) || (p.pos !== -1));
+            if (piece) {
+                if (piece.pos === -1) piece.pos = 0; // Start
+                else piece.pos = (piece.pos + dice) % 52; // Circular path
+                updatePiecePosition(piece);
+                status.textContent = `Moved piece to ${piece.pos}!`;
+            } else {
+                status.textContent = 'No move possible.';
+            }
+        });
+
+        // PWA service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => console.log('SW registered!'));
+        }
+    </script>
+</body>
+</html>

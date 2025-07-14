@@ -1,0 +1,20 @@
+{
+  "name": "Ara Ludo",
+  "short_name": "AraLudo",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/Omoluabi1003/Ariyo-AI/main/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/Omoluabi1003/Ariyo-AI/main/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}
