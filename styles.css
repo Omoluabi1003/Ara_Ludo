@@ -1,119 +1,116 @@
+:root {
+    --board-bg: #f1f1f1;
+    --cell-bg: #fff;
+    --safe-bg: #d4edda;
+    --red: #d9534f;
+    --green: #5cb85c;
+    --blue: #428bca;
+    --yellow: #f0ad4e;
+    --text-dark: #333;
+    --text-light: #fff;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
-    background-color: #f0f2f5;
-    color: #333;
-}
-
-h1 {
-    color: #0056b3;
+    background-color: var(--board-bg);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
 #game-container {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-#board {
-    display: grid;
-    grid-template-columns: repeat(15, 40px);
-    grid-template-rows: repeat(15, 40px);
-    border: 3px solid #333;
-    background-color: #fff;
-    position: relative;
-}
-
-.cell {
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    font-size: 10px;
-    display: flex;
-    justify-content: center;
+    gap: 30px;
     align-items: center;
 }
 
-/* Player Homes */
-.home-red { background-color: #ffdddd; grid-area: 1 / 1 / 7 / 7; }
-.home-green { background-color: #ddffdd; grid-area: 1 / 10 / 7 / 16; }
-.home-blue { background-color: #ddddff; grid-area: 10 / 1 / 16 / 7; }
-.home-yellow { background-color: #ffffdd; grid-area: 10 / 10 / 16 / 16; }
+#board-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+}
 
-/* Path */
-.path { background-color: #f8f9fa; }
-.path.red-start { background-color: #ffcccc; }
-.path.green-start { background-color: #ccffcc; }
-.path.blue-start { background-color: #ccccff; }
-.path.yellow-start { background-color: #ffffcc; }
+#board {
+    width: 100%;
+    height: 100%;
+    background-image: url('ludo.png');
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
-/* Safe Spots */
-.safe { background-color: #d4edda; }
-
-/* Center Goal */
-.goal { background-color: #ffd700; grid-area: 7 / 7 / 10 / 10; }
-
-/* Pieces */
 .piece {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    color: white;
+    color: var(--text-light);
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 2px solid rgba(0,0,0,0.2);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border: 3px solid rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-.red-piece { background-color: #d9534f; }
-.green-piece { background-color: #5cb85c; }
-.blue-piece { background-color: #428bca; }
-.yellow-piece { background-color: #f0ad4e; }
+.red-piece { background-color: var(--red); }
+.green-piece { background-color: var(--green); }
+.blue-piece { background-color: var(--blue); }
+.yellow-piece { background-color: var(--yellow); }
 
 .piece:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transform: scale(1.15);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
 }
 
 #controls {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    gap: 20px;
+    padding: 25px;
+    background-color: var(--cell-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-button {
-    padding: 12px 25px;
-    font-size: 18px;
+button#roll {
+    padding: 15px 30px;
+    font-size: 22px;
     border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
+    border-radius: 8px;
+    background-color: var(--blue);
+    color: var(--text-light);
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
+button#roll:hover {
+    background-color: #367abc;
+    transform: translateY(-2px);
+}
+
+button#roll:active {
+    transform: translateY(0);
 }
 
 #result {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-dark);
 }
 
 #status {
-    font-size: 16px;
+    font-size: 18px;
     color: #555;
-    min-height: 50px;
+    min-height: 60px;
+    font-style: italic;
 }
