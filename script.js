@@ -20,6 +20,8 @@ class Game {
 
         this.numPlayers = 4; // Default
 
+        this.gameContainer.style.display = 'none';
+
         this.playerSelectionButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 this.playerSelectionButtons.forEach(btn => btn.classList.remove('selected'));
