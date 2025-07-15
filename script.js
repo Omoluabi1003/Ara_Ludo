@@ -1,13 +1,10 @@
 class Player {
-    constructor(color, startPos, homeEntryPos) {
+    constructor(color, startPosition, homeEntryIndex) {
         this.color = color;
-        this.pieces = [-1, -1, -1, -1]; // -1: base, 52-57: home path, 58: finished
-        this.startPos = startPos;
-        this.homeEntryPos = homeEntryPos;
-    }
-
-    get finishedPieces() {
-        return this.pieces.filter(p => p === 58).length;
+        this.startPosition = startPosition; // Index on board where tokens start
+        this.homeEntryIndex = homeEntryIndex; // Index where token enters home
+        this.tokens = Array(4).fill("base"); // 'base', 0-51, or 'home-X'
+        this.completed = 0; // Number of tokens that reached home-5
     }
 }
 
@@ -43,22 +40,24 @@ class Game {
 
         this.players = {};
         const playerDefs = {
-            red: { startPos: 0, homeEntryPos: 50 },
-            green: { startPos: 13, homeEntryPos: 11 },
-            blue: { startPos: 26, homeEntryPos: 24 },
-            yellow: { startPos: 39, homeEntryPos: 37 }
+            red: { startPosition: 0, homeEntryIndex: 50 },
+            green: { startPosition: 13, homeEntryIndex: 11 },
+            blue: { startPosition: 26, homeEntryIndex: 24 },
+            yellow: { startPosition: 39, homeEntryIndex: 37 }
         };
 
         activePlayers.forEach(color => {
-            this.players[color] = new Player(color, playerDefs[color].startPos, playerDefs[color].homeEntryPos);
+            this.players[color] = new Player(color, playerDefs[color].startPosition, playerDefs[color].homeEntryIndex);
         });
 
         this.currentPlayer = 'red';
         this.diceRoll = 0;
         this.gameover = false;
-        this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
+        this.safeSpots = [1, 9, 14, 22, 27, 35, 40, 48]; // Updated to match your logic
+        this.boardLength = 52;
+        this.homeLength = 6;
         this.boardSize = 600;
-        this.cellSize = 40; // 40px cells
+        this.cellSize = 40;
         this.path = this.generatePath();
         this.homePaths = this.generateHomePaths();
         this.homeBaseCoords = this.generateHomeBaseCoords();
@@ -71,6 +70,7 @@ class Game {
         this.winnerMessage = document.getElementById('winner-message');
 
         this.rollBtn.addEventListener('click', () => this.rollDice());
+        this.addSimulateButton(); // Add button for 100-turn simulation
         this.drawBoard();
         this.drawPieces();
         this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice!`);
@@ -103,34 +103,27 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        // Grid-based coordinates (0,0) at top-left, (600,600) at bottom-right, adjusted for 10px border
-        // Red starts at bottom center (position 0), clockwise
-        p[0] = { x: 300 * s, y: 570 * s }; // Red start (0), center of bottom row
+        // Grid-based coordinates, adjusted for 10px border, 40px cells
+        p[0] = { x: 300 * s, y: 570 * s }; // Red start (0)
         p[1] = { x: 260 * s, y: 570 * s }; p[2] = { x: 220 * s, y: 570 * s }; p[3] = { x: 180 * s, y: 570 * s };
         p[4] = { x: 140 * s, y: 570 * s }; p[5] = { x: 100 * s, y: 530 * s }; p[6] = { x: 100 * s, y: 490 * s };
         p[7] = { x: 100 * s, y: 450 * s }; p[8] = { x: 100 * s, y: 410 * s }; p[9] = { x: 100 * s, y: 370 * s };
         p[10] = { x: 100 * s, y: 330 * s }; p[11] = { x: 100 * s, y: 290 * s };
-        // Green starts at left center (position 13)
         p[12] = { x: 60 * s, y: 290 * s }; p[13] = { x: 60 * s, y: 250 * s }; // Green start (13)
         p[14] = { x: 100 * s, y: 250 * s }; p[15] = { x: 140 * s, y: 250 * s }; p[16] = { x: 180 * s, y: 250 * s };
         p[17] = { x: 220 * s, y: 250 * s }; p[18] = { x: 260 * s, y: 210 * s }; p[19] = { x: 260 * s, y: 170 * s };
         p[20] = { x: 260 * s, y: 130 * s }; p[21] = { x: 260 * s, y: 90 * s }; p[22] = { x: 260 * s, y: 50 * s };
         p[23] = { x: 300 * s, y: 50 * s };
-        // Blue starts at top center (position 26)
-        p[24] = { x: 340 * s, y: 50 * s }; p[25] = { x: 380 * s, y: 50 * s }; // Blue start (26)
-        p[26] = { x: 420 * s, y: 50 * s }; p[27] = { x: 460 * s, y: 50 * s }; p[28] = { x: 500 * s, y: 50 * s };
-        p[29] = { x: 540 * s, y: 90 * s }; p[30] = { x: 540 * s, y: 130 * s }; p[31] = { x: 540 * s, y: 170 * s };
-        p[32] = { x: 540 * s, y: 210 * s }; p[33] = { x: 540 * s, y: 250 * s }; p[34] = { x: 540 * s, y: 290 * s };
-        p[35] = { x: 540 * s, y: 330 * s };
-        // Yellow starts at right center (position 39)
-        p[36] = { x: 540 * s, y: 370 * s }; p[37] = { x: 540 * s, y: 410 * s }; // Yellow start (39)
-        p[38] = { x: 500 * s, y: 410 * s }; p[39] = { x: 460 * s, y: 410 * s }; p[40] = { x: 420 * s, y: 410 * s };
-        p[41] = { x: 380 * s, y: 410 * s }; p[42] = { x: 340 * s, y: 450 * s }; p[43] = { x: 340 * s, y: 490 * s };
-        p[44] = { x: 340 * s, y: 530 * s }; p[45] = { x: 340 * s, y: 570 * s }; p[46] = { x: 300 * s, y: 570 * s };
-        p[47] = { x: 260 * s, y: 570 * s };
-        // Complete the circle (positions 48-51)
-        p[48] = { x: 220 * s, y: 570 * s }; p[49] = { x: 180 * s, y: 570 * s }; p[50] = { x: 140 * s, y: 570 * s };
-        p[51] = { x: 100 * s, y: 570 * s };
+        p[24] = { x: 340 * s, y: 50 * s }; p[25] = { x: 380 * s, y: 50 * s }; p[26] = { x: 420 * s, y: 50 * s }; // Blue start (26)
+        p[27] = { x: 460 * s, y: 50 * s }; p[28] = { x: 500 * s, y: 50 * s }; p[29] = { x: 540 * s, y: 90 * s };
+        p[30] = { x: 540 * s, y: 130 * s }; p[31] = { x: 540 * s, y: 170 * s }; p[32] = { x: 540 * s, y: 210 * s };
+        p[33] = { x: 540 * s, y: 250 * s }; p[34] = { x: 540 * s, y: 290 * s }; p[35] = { x: 540 * s, y: 330 * s };
+        p[36] = { x: 540 * s, y: 370 * s }; p[37] = { x: 540 * s, y: 410 * s }; p[38] = { x: 500 * s, y: 410 * s };
+        p[39] = { x: 460 * s, y: 410 * s }; // Yellow start (39)
+        p[40] = { x: 420 * s, y: 410 * s }; p[41] = { x: 380 * s, y: 410 * s }; p[42] = { x: 340 * s, y: 450 * s };
+        p[43] = { x: 340 * s, y: 490 * s }; p[44] = { x: 340 * s, y: 530 * s }; p[45] = { x: 340 * s, y: 570 * s };
+        p[46] = { x: 300 * s, y: 570 * s }; p[47] = { x: 260 * s, y: 570 * s }; p[48] = { x: 220 * s, y: 570 * s };
+        p[49] = { x: 180 * s, y: 570 * s }; p[50] = { x: 140 * s, y: 570 * s }; p[51] = { x: 100 * s, y: 570 * s };
         return p;
     }
 
@@ -203,7 +196,7 @@ class Game {
         this.path.forEach((p, i) => {
             const cell = document.createElement('div');
             cell.className = `path-cell ${this.safeSpots.includes(i) ? 'safe-spot' : ''}`;
-            cell.style.left = `${p.x}px`; // Use raw coordinates for alignment
+            cell.style.left = `${p.x}px`;
             cell.style.top = `${p.y}px`;
             cell.style.width = `${this.cellSize * s}px`;
             cell.style.height = `${this.cellSize * s}px`;
@@ -214,7 +207,7 @@ class Game {
             this.homePaths[color].forEach((p, i) => {
                 const cell = document.createElement('div');
                 cell.className = `path-cell home-path-cell ${color}-path`;
-                cell.style.left = `${p.x}px`; // Use raw coordinates
+                cell.style.left = `${p.x}px`;
                 cell.style.top = `${p.y}px`;
                 cell.style.width = `${this.cellSize * s}px`;
                 cell.style.height = `${this.cellSize * s}px`;
@@ -238,29 +231,30 @@ class Game {
     drawPieces() {
         this.boardContainer.querySelectorAll('.piece').forEach(p => p.remove());
         const boardRect = this.boardContainer.getBoundingClientRect();
-        const scale = boardRect.width / this.boardSize;
+        const s = boardRect.width / this.boardSize;
 
         for (const color in this.players) {
             const player = this.players[color];
-            player.pieces.forEach((pos, i) => {
-                if (pos === 58) return;
+            player.tokens.forEach((pos, i) => {
+                if (typeof pos === "string" && pos.startsWith("home-") && parseInt(pos.split("-")[1]) === 5) return; // Skip finished tokens
                 const piece = document.createElement('div');
                 piece.className = `piece ${color}-piece`;
                 piece.dataset.color = color;
                 piece.dataset.index = i;
                 let coords;
-                if (pos === -1) {
+                if (pos === "base") {
                     coords = this.homeBaseCoords[color][i];
-                } else if (pos >= 52) {
-                    coords = this.homePaths[color][pos - 52];
+                } else if (typeof pos === "string" && pos.startsWith("home-")) {
+                    const homePos = parseInt(pos.split("-")[1]);
+                    coords = this.homePaths[color][homePos];
                 } else {
                     coords = this.path[pos];
                 }
-                piece.style.left = `${coords.x * scale}px`;
-                piece.style.top = `${coords.y * scale}px`;
-                piece.style.transform = `translate(-${this.cellSize * s / 2}px, -${this.cellSize * s / 2}px)`; // Precise centering
+                piece.style.left = `${coords.x * s}px`;
+                piece.style.top = `${coords.y * s}px`;
+                piece.style.transform = `translate(-${this.cellSize * s / 2}px, -${this.cellSize * s / 2}px)`;
                 this.boardContainer.appendChild(piece);
-                console.log(`${color} piece ${i}: pos=${pos}, intended=(${coords.x}, ${coords.y}), rendered=(${coords.x * scale}, ${coords.y * scale})`);
+                console.log(`${color} piece ${i}: pos=${pos}, coords=(${coords.x * s}, ${coords.y * s})`);
             });
         }
     }
@@ -298,30 +292,34 @@ class Game {
 
     hasValidMoves() {
         const player = this.players[this.currentPlayer];
-        return player.pieces.some((pos, i) => this.isValidMove(pos, i));
+        return player.tokens.some((pos, i) => this.isValidMove(pos, i));
     }
 
-    isValidMove(pos, pieceIndex) {
+    isValidMove(pos, tokenIndex) {
         const player = this.players[this.currentPlayer];
-        if (pos === 58) return false;
-        if (pos === -1 && this.diceRoll !== 6) return false;
-        if (pos === -1) return true;
-        const homeEntry = player.homeEntryPos;
-        const distToHomeEntry = (homeEntry - pos + 52) % 52;
-        if (pos < 52 && this.diceRoll > distToHomeEntry) {
-            const homePathPos = 51 + (this.diceRoll - distToHomeEntry);
-            return homePathPos <= 58;
+        if (pos === "base" && this.diceRoll !== 6) return false;
+        if (pos === "base") return true;
+        if (typeof pos === "number") {
+            const newPosition = pos + this.diceRoll;
+            if ((pos < player.homeEntryIndex && newPosition > player.homeEntryIndex) ||
+                (player.homeEntryIndex < pos && newPosition >= this.boardLength + this.homeLength)) {
+                const homePos = newPosition - player.homeEntryIndex - 1;
+                return homePos < this.homeLength;
+            }
+            if (newPosition >= this.boardLength) return true; // Wrap around
+            return true;
         }
-        if (pos >= 52) {
-            return pos + this.diceRoll <= 58;
+        if (typeof pos === "string" && pos.startsWith("home-")) {
+            const currentHomePos = parseInt(pos.split("-")[1]);
+            return currentHomePos + this.diceRoll < this.homeLength;
         }
-        return true;
+        return false;
     }
 
     highlightMovablePieces() {
         document.querySelectorAll('.piece.highlight').forEach(p => p.classList.remove('highlight'));
         const player = this.players[this.currentPlayer];
-        player.pieces.forEach((pos, i) => {
+        player.tokens.forEach((pos, i) => {
             if (this.isValidMove(pos, i)) {
                 const pieceElement = document.querySelector(`.piece[data-color="${this.currentPlayer}"][data-index="${i}"]`);
                 if (pieceElement) {
@@ -348,21 +346,20 @@ class Game {
     movePiece(event) {
         const pieceElement = event.target;
         const color = pieceElement.dataset.color;
-        const pieceIndex = parseInt(pieceElement.dataset.index);
+        const tokenIndex = parseInt(pieceElement.dataset.index);
         const player = this.players[color];
-        const currentPos = player.pieces[pieceIndex];
+        const currentPos = player.tokens[tokenIndex];
 
-        if (!this.isValidMove(currentPos, pieceIndex)) {
+        if (!this.isValidMove(currentPos, tokenIndex)) {
             this.updateStatus('Invalid move! Select another piece.');
             return;
         }
 
-        if (currentPos === -1) {
+        if (currentPos === "base") {
             if (this.diceRoll === 6) {
-                player.pieces[pieceIndex] = player.startPos;
-                this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span> moved a piece to position ${player.startPos}!`);
-                console.log(`${color} piece ${pieceIndex} moved to startPos=${player.startPos}, coords=(${this.path[player.startPos].x}, ${this.path[player.startPos].y})`);
-                this.handleCapture(player.startPos, color);
+                player.tokens[tokenIndex] = player.startPosition;
+                this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span> moved a piece to position ${player.startPosition}!`);
+                this.handleCapture(player.startPosition, color);
                 this.drawPieces();
                 this.endTurn();
             } else {
@@ -371,37 +368,46 @@ class Game {
             return;
         }
 
-        const homeEntry = player.homeEntryPos;
-        const distToHomeEntry = (homeEntry - currentPos + 52) % 52;
+        let newPosition;
+        if (typeof currentPos === "number") {
+            newPosition = currentPos + this.diceRoll;
 
-        if (currentPos < 52 && this.diceRoll > distToHomeEntry) {
-            const homePathPos = 51 + (this.diceRoll - distToHomeEntry);
-            if (homePathPos <= 58) {
-                player.pieces[pieceIndex] = homePathPos;
-                if (homePathPos === 58) {
+            if ((currentPos < player.homeEntryIndex && newPosition > player.homeEntryIndex) ||
+                (player.homeEntryIndex < currentPos && newPosition >= this.boardLength + this.homeLength)) {
+                const homePos = newPosition - player.homeEntryIndex - 1;
+                if (homePos < this.homeLength) {
+                    player.tokens[tokenIndex] = `home-${homePos}`;
+                    if (homePos === this.homeLength - 1) {
+                        player.completed += 1;
+                        this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span>'s piece reached the finish!`);
+                        if (player.completed === 4) {
+                            this.gameover = true;
+                            this.showGameOver(color);
+                        }
+                    }
+                }
+            } else {
+                if (newPosition >= this.boardLength) newPosition %= this.boardLength;
+                player.tokens[tokenIndex] = newPosition;
+                this.handleCapture(newPosition, color);
+            }
+        } else if (typeof currentPos === "string" && currentPos.startsWith("home-")) {
+            const currentHomePos = parseInt(currentPos.split("-")[1]);
+            const newHomePos = currentHomePos + this.diceRoll;
+            if (newHomePos < this.homeLength) {
+                player.tokens[tokenIndex] = `home-${newHomePos}`;
+                if (newHomePos === this.homeLength - 1) {
+                    player.completed += 1;
                     this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span>'s piece reached the finish!`);
+                    if (player.completed === 4) {
+                        this.gameover = true;
+                        this.showGameOver(color);
+                    }
                 }
             }
-        } else if (currentPos >= 52) {
-            const newHomePos = currentPos + this.diceRoll;
-            if (newHomePos <= 58) {
-                player.pieces[pieceIndex] = newHomePos;
-                if (newHomePos === 58) {
-                    this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span>'s piece reached the finish!`);
-                }
-            }
-        } else {
-            const newPos = (currentPos + this.diceRoll) % 52;
-            player.pieces[pieceIndex] = newPos;
-            this.handleCapture(newPos, color);
         }
 
-        if (player.finishedPieces === 4) {
-            this.gameover = true;
-            this.showGameOver(color);
-        } else {
-            this.endTurn();
-        }
+        if (!this.gameover) this.endTurn();
     }
 
     showGameOver(winner) {
@@ -420,11 +426,11 @@ class Game {
         for (const color in this.players) {
             if (color !== attackerColor) {
                 const player = this.players[color];
-                player.pieces = player.pieces.map(p => {
-                    if (p === pos && p < 52) {
+                player.tokens = player.tokens.map((p, i) => {
+                    if (typeof p === "number" && p === pos) {
                         this.updateStatus(`<span style="color: ${attackerColor};">${this.capitalize(attackerColor)}</span> captured <span style="color: ${color};">${this.capitalize(color)}</span>'s piece!`);
                         console.log(`${attackerColor} captured ${color}'s piece at pos ${pos}`);
-                        return -1;
+                        return "base";
                     }
                     return p;
                 });
@@ -460,6 +466,123 @@ class Game {
 
     updateStatus(message) {
         this.status.innerHTML = message;
+    }
+
+    addSimulateButton() {
+        const simulateBtn = document.createElement('button');
+        simulateBtn.textContent = 'Simulate 100 Turns';
+        simulateBtn.style.padding = '15px 30px';
+        simulateBtn.style.fontSize = '1.2em';
+        simulateBtn.style.marginTop = '10px';
+        simulateBtn.style.backgroundColor = 'var(--blue)';
+        simulateBtn.style.color = 'var(--text-light)';
+        simulateBtn.style.border = 'none';
+        simulateBtn.style.borderRadius = '10px';
+        simulateBtn.style.cursor = 'pointer';
+        simulateBtn.addEventListener('click', () => this.simulateTurns(100));
+        this.gameContainer.appendChild(simulateBtn);
+    }
+
+    simulateTurns(numTurns) {
+        console.log("Starting simulation of 100 turns...");
+        let turn = 0;
+        while (turn < numTurns && !this.gameover) {
+            const player = this.players[this.currentPlayer];
+            const roll = Math.floor(Math.random() * 6) + 1;
+            console.log(`Turn ${turn + 1}: ${player.color} rolled ${roll}`);
+            let moved = false;
+            for (let i = 0; i < 4; i++) {
+                if (this.moveToken(this.currentPlayer, i, roll)) {
+                    moved = true;
+                    break;
+                }
+            }
+            if (!moved) {
+                console.log(`${player.color} has no valid moves.`);
+            }
+            if (!moved && roll !== 6) {
+                const playerColors = Object.keys(this.players);
+                const currentIndex = playerColors.indexOf(this.currentPlayer);
+                this.currentPlayer = playerColors[(currentIndex + 1) % playerColors.length];
+            }
+            turn++;
+        }
+        console.log("Simulation ended. Final state:");
+        for (const color in this.players) {
+            console.log(`${color}: tokens=${this.players[color].tokens}, completed=${this.players[color].completed}`);
+        }
+        if (this.gameover) {
+            this.updateStatus(`Simulation ended: <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span> wins!`);
+        } else {
+            this.updateStatus("Simulation ended without a winner.");
+        }
+    }
+
+    moveToken(playerIndex, tokenIndex, roll) {
+        const player = this.players[Object.keys(this.players)[playerIndex]];
+        const currentPos = player.tokens[tokenIndex];
+
+        if (currentPos === "base") {
+            if (roll === 6) {
+                player.tokens[tokenIndex] = player.startPosition;
+                this.drawPieces();
+                return true;
+            }
+            return false;
+        }
+
+        if (typeof currentPos === "number") {
+            let newPosition = currentPos + roll;
+
+            if ((currentPos < player.homeEntryIndex && newPosition > player.homeEntryIndex) ||
+                (player.homeEntryIndex < currentPos && newPosition >= this.boardLength + this.homeLength)) {
+                const homePos = newPosition - player.homeEntryIndex - 1;
+                if (homePos >= this.homeLength) return false;
+                player.tokens[tokenIndex] = `home-${homePos}`;
+                if (homePos === this.homeLength - 1) {
+                    player.completed += 1;
+                    if (player.completed === 4) {
+                        this.gameover = true;
+                    }
+                }
+                this.drawPieces();
+                return true;
+            }
+
+            if (newPosition >= this.boardLength) newPosition %= this.boardLength;
+
+            for (let i = 0; i < Object.keys(this.players).length; i++) {
+                if (i === playerIndex) continue;
+                const opponent = this.players[Object.keys(this.players)[i]];
+                for (let j = 0; j < 4; j++) {
+                    if (opponent.tokens[j] === newPosition && !this.safeSpots.includes(newPosition)) {
+                        opponent.tokens[j] = "base";
+                        this.updateStatus(`<span style="color: ${player.color};">${this.capitalize(player.color)}</span> captured <span style="color: ${opponent.color};">${this.capitalize(opponent.color)}</span>'s piece!`);
+                    }
+                }
+            }
+
+            player.tokens[tokenIndex] = newPosition;
+            this.drawPieces();
+            return true;
+        }
+
+        if (typeof currentPos === "string" && currentPos.startsWith("home-")) {
+            const pos = parseInt(currentPos.split("-")[1]);
+            const newPos = pos + roll;
+            if (newPos < this.homeLength) {
+                player.tokens[tokenIndex] = `home-${newPos}`;
+                if (newPos === this.homeLength - 1) {
+                    player.completed += 1;
+                    if (player.completed === 4) {
+                        this.gameover = true;
+                    }
+                }
+                this.drawPieces();
+                return true;
+            }
+        }
+        return false;
     }
 }
 
