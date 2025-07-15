@@ -102,49 +102,82 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        // Start at Red's position 0, proceed clockwise, ensuring correct order
         // Red Path (bottom, positions 0-11)
-        p[0] = { x: 240*s, y: 550*s }; // Red start (0)
-        p[1] = { x: 240*s, y: 510*s }; p[2] = { x: 240*s, y: 470*s }; p[3] = { x: 240*s, y: 430*s }; p[4] = { x: 240*s, y: 390*s };
-        p[5] = { x: 190*s, y: 350*s }; p[6] = { x: 150*s, y: 350*s }; p[7] = { x: 110*s, y: 350*s }; p[8] = { x: 70*s, y: 350*s }; p[9] = { x: 30*s, y: 350*s };
-        p[10] = { x: 30*s, y: 310*s }; p[11] = { x: 30*s, y: 270*s };
+        p[0] = { x: 270*s, y: 550*s }; // Red start (0), adjusted to fix offset
+        p[1] = { x: 240*s, y: 550*s }; p[2] = { x: 240*s, y: 510*s }; p[3] = { x: 240*s, y: 470*s }; p[4] = { x: 240*s, y: 430*s };
+        p[5] = { x: 240*s, y: 390*s }; p[6] = { x: 190*s, y: 350*s }; p[7] = { x: 150*s, y: 350*s }; p[8] = { x: 110*s, y: 350*s };
+        p[9] = { x: 70*s, y: 350*s }; p[10] = { x: 30*s, y: 350*s }; p[11] = { x: 30*s, y: 310*s };
         // Green Path (left, positions 12-23)
-        p[12] = { x: 30*s, y: 230*s }; // Green start (13, adjusted to 12 to test offset)
-        p[13] = { x: 70*s, y: 230*s }; p[14] = { x: 110*s, y: 230*s }; p[15] = { x: 150*s, y: 230*s }; p[16] = { x: 190*s, y: 230*s };
-        p[17] = { x: 230*s, y: 190*s }; p[18] = { x: 230*s, y: 150*s }; p[19] = { x: 230*s, y: 110*s }; p[20] = { x: 230*s, y: 70*s }; p[21] = { x: 230*s, y: 30*s };
-        p[22] = { x: 270*s, y: 30*s }; p[23] = { x: 310*s, y: 30*s };
+        p[12] = { x: 30*s, y: 270*s }; // Adjusted for Green start (13)
+        p[13] = { x: 30*s, y: 230*s }; // Green start (13)
+        p[14] = { x: 70*s, y: 230*s }; p[15] = { x: 110*s, y: 230*s }; p[16] = { x: 150*s, y: 230*s };
+        p[17] = { x: 190*s, y: 230*s }; p[18] = { x: 230*s, y: 190*s }; p[19] = { x: 230*s, y: 150*s };
+        p[20] = { x: 230*s, y: 110*s }; p[21] = { x: 230*s, y: 70*s }; p[22] = { x: 230*s, y: 30*s };
+        p[23] = { x: 270*s, y: 30*s };
         // Blue Path (top, positions 24-35)
-        p[24] = { x: 350*s, y: 30*s }; // Blue start (26, adjusted to 24)
-        p[25] = { x: 350*s, y: 70*s }; p[26] = { x: 350*s, y: 110*s }; p[27] = { x: 350*s, y: 150*s }; p[28] = { x: 350*s, y: 190*s };
-        p[29] = { x: 390*s, y: 230*s }; p[30] = { x: 430*s, y: 230*s }; p[31] = { x: 470*s, y: 230*s }; p[32] = { x: 510*s, y: 230*s }; p[33] = { x: 550*s, y: 230*s };
-        p[34] = { x: 550*s, y: 270*s }; p[35] = { x: 550*s, y: 310*s };
+        p[24] = { x: 310*s, y: 30*s }; // Adjusted for Blue start (26)
+        p[25] = { x: 350*s, y: 30*s }; // Blue start (26)
+        p[26] = { x: 350*s, y: 70*s }; p[27] = { x: 350*s, y: 110*s }; p[28] = { x: 350*s, y: 150*s };
+        p[29] = { x: 350*s, y: 190*s }; p[30] = { x: 390*s, y: 230*s }; p[31] = { x: 430*s, y: 230*s };
+        p[32] = { x: 470*s, y: 230*s }; p[33] = { x: 510*s, y: 230*s }; p[34] = { x: 550*s, y: 230*s };
+        p[35] = { x: 550*s, y: 270*s };
         // Yellow Path (right, positions 36-47)
-        p[36] = { x: 550*s, y: 350*s }; // Yellow start (39, adjusted to 36)
-        p[37] = { x: 510*s, y: 350*s }; p[38] = { x: 470*s, y: 350*s }; p[39] = { x: 430*s, y: 350*s }; p[40] = { x: 390*s, y: 350*s };
-        p[41] = { x: 350*s, y: 390*s }; p[42] = { x: 350*s, y: 430*s }; p[43] = { x: 350*s, y: 470*s }; p[44] = { x: 350*s, y: 510*s }; p[45] = { x: 350*s, y: 550*s };
-        p[46] = { x: 310*s, y: 550*s }; p[47] = { x: 270*s, y: 550*s };
-        // Complete the circle back to Red (positions 48-51)
-        p[48] = { x: 270*s, y: 510*s }; p[49] = { x: 270*s, y: 470*s }; p[50] = { x: 270*s, y: 430*s }; p[51] = { x: 270*s, y: 390*s };
+        p[36] = { x: 550*s, y: 310*s }; // Adjusted for Yellow start (39)
+        p[37] = { x: 550*s, y: 350*s }; // Yellow start (39)
+        p[38] = { x: 510*s, y: 350*s }; p[39] = { x: 470*s, y: 350*s }; p[40] = { x: 430*s, y: 350*s };
+        p[41] = { x: 390*s, y: 350*s }; p[42] = { x: 350*s, y: 390*s }; p[43] = { x: 350*s, y: 430*s };
+        p[44] = { x: 350*s, y: 470*s }; p[45] = { x: 350*s, y: 510*s }; p[46] = { x: 350*s, y: 550*s };
+        p[47] = { x: 310*s, y: 550*s };
+        // Complete the circle (positions 48-51)
+        p[48] = { x: 270*s, y: 550*s }; p[49] = { x: 270*s, y: 510*s }; p[50] = { x: 270*s, y: 470*s }; p[51] = { x: 270*s, y: 430*s };
         return p;
     }
 
     generateHomePaths() {
         const s = this.boardSize / 600;
         return {
-            red: [ { x: 270*s, y: 510*s }, { x: 270*s, y: 470*s }, { x: 270*s, y: 430*s }, { x: 270*s, y: 390*s }, { x: 270*s, y: 350*s }, { x: 270*s, y: 310*s } ],
-            green: [ { x: 70*s, y: 270*s }, { x: 110*s, y: 270*s }, { x: 150*s, y: 270*s }, { x: 190*s, y: 270*s }, { x: 230*s, y: 270*s }, { x: 270*s, y: 270*s } ],
-            blue: [ { x: 310*s, y: 70*s }, { x: 310*s, y: 110*s }, { x: 310*s, y: 150*s }, { x: 310*s, y: 190*s }, { x: 310*s, y: 230*s }, { x: 310*s, y: 270*s } ],
-            yellow: [ { x: 510*s, y: 310*s }, { x: 470*s, y: 310*s }, { x: 430*s, y: 310*s }, { x: 390*s, y: 310*s }, { x: 350*s, y: 310*s }, { x: 310*s, y: 310*s } ]
+            red: [
+                { x: 270*s, y: 510*s }, // Adjusted to align with path
+                { x: 270*s, y: 470*s }, { x: 270*s, y: 430*s }, { x: 270*s, y: 390*s },
+                { x: 270*s, y: 350*s }, { x: 270*s, y: 310*s }
+            ],
+            green: [
+                { x: 70*s, y: 270*s }, // Adjusted to align with path
+                { x: 110*s, y: 270*s }, { x: 150*s, y: 270*s }, { x: 190*s, y: 270*s },
+                { x: 230*s, y: 270*s }, { x: 270*s, y: 270*s }
+            ],
+            blue: [
+                { x: 310*s, y: 70*s }, // Adjusted to align with path
+                { x: 310*s, y: 110*s }, { x: 310*s, y: 150*s }, { x: 310*s, y: 190*s },
+                { x: 310*s, y: 230*s }, { x: 310*s, y: 270*s }
+            ],
+            yellow: [
+                { x: 510*s, y: 310*s }, // Adjusted to align with path
+                { x: 470*s, y: 310*s }, { x: 430*s, y: 310*s }, { x: 390*s, y: 310*s },
+                { x: 350*s, y: 310*s }, { x: 310*s, y: 310*s }
+            ]
         };
     }
 
     generateHomeBaseCoords() {
         const s = this.boardSize / 600;
         return {
-            red: [ { x: 60*s, y: 450*s }, { x: 150*s, y: 450*s }, { x: 60*s, y: 540*s }, { x: 150*s, y: 540*s } ],
-            green: [ { x: 60*s, y: 60*s }, { x: 150*s, y: 60*s }, { x: 60*s, y: 150*s }, { x: 150*s, y: 150*s } ],
-            blue: [ { x: 450*s, y: 60*s }, { x: 540*s, y: 60*s }, { x: 450*s, y: 150*s }, { x: 540*s, y: 150*s } ],
-            yellow: [ { x: 450*s, y: 450*s }, { x: 540*s, y: 450*s }, { x: 450*s, y: 540*s }, { x: 540*s, y: 540*s } ]
+            red: [
+                { x: 60*s, y: 450*s }, { x: 150*s, y: 450*s },
+                { x: 60*s, y: 540*s }, { x: 150*s, y: 540*s }
+            ],
+            green: [
+                { x: 60*s, y: 60*s }, { x: 150*s, y: 60*s },
+                { x: 60*s, y: 150*s }, { x: 150*s, y: 150*s }
+            ],
+            blue: [
+                { x: 450*s, y: 60*s }, { x: 540*s, y: 60*s },
+                { x: 450*s, y: 150*s }, { x: 540*s, y: 150*s }
+            ],
+            yellow: [
+                { x: 450*s, y: 450*s }, { x: 540*s, y: 450*s },
+                { x: 450*s, y: 540*s }, { x: 540*s, y: 540*s }
+            ]
         };
     }
 
@@ -177,34 +210,31 @@ class Game {
             cell.style.top = `${p.y * s}px`;
             cell.style.width = `${40 * s}px`;
             cell.style.height = `${40 * s}px`;
-            if (this.safeSpots.includes(i)) {
-                cell.style.backgroundImage = 'radial-gradient(circle, white, transparent)';
-                cell.style.border = '2px solid gold';
-            }
             board.appendChild(cell);
         });
 
         for (const color in this.homePaths) {
-            this.homePaths[color].forEach(p => {
+            this.homePaths[color].forEach((p, i) => {
                 const cell = document.createElement('div');
                 cell.className = `path-cell home-path-cell ${color}-path`;
                 cell.style.left = `${p.x * s}px`;
                 cell.style.top = `${p.y * s}px`;
                 cell.style.width = `${40 * s}px`;
                 cell.style.height = `${40 * s}px`;
+                if (i === 5) { // Last cell in home path (finish)
+                    cell.style.backgroundColor = `var(--${color})`;
+                    cell.style.border = '2px solid var(--text-dark)';
+                }
                 board.appendChild(cell);
             });
         }
 
         const triangle = document.createElement('div');
         triangle.className = 'center-triangle';
-        triangle.style.position = 'absolute';
         triangle.style.left = `${this.boardSize * 0.4 * s}px`;
         triangle.style.top = `${this.boardSize * 0.4 * s}px`;
         triangle.style.width = `${this.boardSize * 0.2 * s}px`;
         triangle.style.height = `${this.boardSize * 0.2 * s}px`;
-        triangle.style.backgroundColor = 'white';
-        triangle.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
         board.appendChild(triangle);
     }
 
@@ -246,7 +276,7 @@ class Game {
         const rotations = {
             1: 'rotateY(0deg)',
             2: 'rotateY(-90deg)',
-            3: 'rotateY(-180deg)',
+            3: 'rotateY(180deg)',
             4: 'rotateY(90deg)',
             5: 'rotateX(90deg)',
             6: 'rotateX(-90deg)'
