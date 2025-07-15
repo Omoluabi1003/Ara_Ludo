@@ -13,12 +13,43 @@ class Player {
 
 class Game {
     constructor() {
-        this.players = {
-            red: new Player('red', 0, 50),
-            green: new Player('green', 13, 11),
-            blue: new Player('blue', 26, 24),
-            yellow: new Player('yellow', 39, 37)
+        this.startScreen = document.getElementById('start-screen');
+        this.gameContainer = document.getElementById('game-container');
+        this.playerSelectionButtons = document.querySelectorAll('.player-option');
+        this.startGameButton = document.getElementById('start-game');
+
+        this.numPlayers = 4; // Default
+
+        this.playerSelectionButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                this.playerSelectionButtons.forEach(btn => btn.classList.remove('selected'));
+                e.target.classList.add('selected');
+                this.numPlayers = parseInt(e.target.dataset.players);
+            });
+        });
+
+        this.startGameButton.addEventListener('click', () => this.startGame());
+    }
+
+    startGame() {
+        this.startScreen.style.display = 'none';
+        this.gameContainer.style.display = 'flex';
+
+        const playerColors = ['red', 'green', 'blue', 'yellow'];
+        const activePlayers = playerColors.slice(0, this.numPlayers);
+
+        this.players = {};
+        const playerDefs = {
+            red: { startPos: 0, homeEntryPos: 50 },
+            green: { startPos: 13, homeEntryPos: 11 },
+            blue: { startPos: 26, homeEntryPos: 24 },
+            yellow: { startPos: 39, homeEntryPos: 37 }
         };
+
+        activePlayers.forEach(color => {
+            this.players[color] = new Player(color, playerDefs[color].startPos, playerDefs[color].homeEntryPos);
+        });
+
         this.currentPlayer = 'red';
         this.diceRoll = 0;
         this.gameover = false;
@@ -36,11 +67,15 @@ class Game {
         this.winnerMessage = document.getElementById('winner-message');
 
         this.rollBtn.addEventListener('click', () => this.rollDice());
+        this.drawBoard();
         this.drawPieces();
         this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Let's roll!`);
         this.updatePlayerTurnIndicator();
 
-        window.addEventListener('resize', () => this.drawPieces());
+        window.addEventListener('resize', () => {
+            this.drawBoard();
+            this.drawPieces();
+        });
     }
 
     capitalize(str) {
@@ -131,16 +166,25 @@ class Game {
             6: 'rotateX(90deg)'
         };
 
-        // Spin the dice
-        dice.style.transform = `rotateX(${Math.random() * 3600}deg) rotateY(${Math.random() * 3600}deg)`;
+        const dice = document.getElementById('dice');
+        dice.classList.add('rolling');
 
         setTimeout(() => {
+            dice.classList.remove('rolling');
+            const rotations = {
+                1: 'rotateY(0deg)',
+                2: 'rotateY(-90deg)',
+                3: 'rotateY(-180deg)',
+                4: 'rotateY(90deg)',
+                5: 'rotateX(-90deg)',
+                6: 'rotateX(90deg)'
+            };
             dice.style.transform = rotations[this.diceRoll];
             this.result.textContent = `You rolled: ${this.diceRoll}`;
             this.updateStatus(`${this.capitalize(this.currentPlayer)}'s turn. Rolled a ${this.diceRoll}. Click a piece to move.`);
             this.highlightMovablePieces();
             this.addPieceClickListeners();
-        }, 1000);
+        }, 1500);
     }
 
     highlightMovablePieces() {
@@ -274,6 +318,51 @@ class Game {
 
     updateStatus(message) {
         this.status.innerHTML = message;
+    }
+
+    drawBoard() {
+        const board = document.getElementById('board');
+        board.innerHTML = ''; // Clear existing board
+        const s = this.boardContainer.getBoundingClientRect().width / this.boardSize;
+
+        const homeBases = {
+            red: { x: 0, y: this.boardSize * 0.6 * s },
+            green: { x: 0, y: 0 },
+            blue: { x: this.boardSize * 0.6 * s, y: 0 },
+            yellow: { x: this.boardSize * 0.6 * s, y: this.boardSize * 0.6 * s }
+        };
+
+        for (const color in homeBases) {
+            const base = document.createElement('div');
+            base.className = `home-base ${color}-base`;
+            base.style.left = `${homeBases[color].x}px`;
+            base.style.top = `${homeBases[color].y}px`;
+            base.style.width = `${this.boardSize * 0.4 * s}px`;
+            base.style.height = `${this.boardSize * 0.4 * s}px`;
+            board.appendChild(base);
+        }
+
+        this.path.forEach(p => {
+            const cell = document.createElement('div');
+            cell.className = 'path-cell';
+            cell.style.left = `${p.x * s}px`;
+            cell.style.top = `${p.y * s}px`;
+            cell.style.width = `${40 * s}px`;
+            cell.style.height = `${40 * s}px`;
+            board.appendChild(cell);
+        });
+
+        for (const color in this.homePaths) {
+            this.homePaths[color].forEach(p => {
+                const cell = document.createElement('div');
+                cell.className = `path-cell home-path-cell ${color}-path`;
+                cell.style.left = `${p.x * s}px`;
+                cell.style.top = `${p.y * s}px`;
+                cell.style.width = `${40 * s}px`;
+                cell.style.height = `${40 * s}px`;
+                board.appendChild(cell);
+            });
+        }
     }
 }
 

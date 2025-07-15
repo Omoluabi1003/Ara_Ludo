@@ -11,7 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <main id="game-container">
+    <div id="start-screen">
+        <h2>Welcome to Ara Ludo!</h2>
+        <p>Select the number of players:</p>
+        <div id="player-selection">
+            <button class="player-option" data-players="2">2 Players</button>
+            <button class="player-option" data-players="3">3 Players</button>
+            <button class="player-option" data-players="4">4 Players</button>
+        </div>
+        <button id="start-game">Start Game</button>
+    </div>
+    <main id="game-container" style="display: none;">
         <section id="board-container" aria-label="Ludo Board">
             <div id="board"></div>
             <div id="game-over-overlay">
