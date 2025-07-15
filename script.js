@@ -102,26 +102,29 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        // Red Path (bottom, starting at position 0)
-        p.push({ x: 240*s, y: 550*s }); // Red start (0)
-        p.push({ x: 240*s, y: 510*s }); p.push({ x: 240*s, y: 470*s }); p.push({ x: 240*s, y: 430*s }); p.push({ x: 240*s, y: 390*s });
-        p.push({ x: 190*s, y: 350*s }); p.push({ x: 150*s, y: 350*s }); p.push({ x: 110*s, y: 350*s }); p.push({ x: 70*s, y: 350*s }); p.push({ x: 30*s, y: 350*s });
-        p.push({ x: 30*s, y: 310*s }); p.push({ x: 30*s, y: 270*s });
-        // Green Path (left, starting at position 13)
-        p.push({ x: 30*s, y: 230*s }); // Green start (13)
-        p.push({ x: 70*s, y: 230*s }); p.push({ x: 110*s, y: 230*s }); p.push({ x: 150*s, y: 230*s }); p.push({ x: 190*s, y: 230*s });
-        p.push({ x: 230*s, y: 190*s }); p.push({ x: 230*s, y: 150*s }); p.push({ x: 230*s, y: 110*s }); p.push({ x: 230*s, y: 70*s }); p.push({ x: 230*s, y: 30*s });
-        p.push({ x: 270*s, y: 30*s }); p.push({ x: 310*s, y: 30*s });
-        // Blue Path (top, starting at position 26)
-        p.push({ x: 350*s, y: 30*s }); // Blue start (26)
-        p.push({ x: 350*s, y: 70*s }); p.push({ x: 350*s, y: 110*s }); p.push({ x: 350*s, y: 150*s }); p.push({ x: 350*s, y: 190*s });
-        p.push({ x: 390*s, y: 230*s }); p.push({ x: 430*s, y: 230*s }); p.push({ x: 470*s, y: 230*s }); p.push({ x: 510*s, y: 230*s }); p.push({ x: 550*s, y: 230*s });
-        p.push({ x: 550*s, y: 270*s }); p.push({ x: 550*s, y: 310*s });
-        // Yellow Path (right, starting at position 39)
-        p.push({ x: 550*s, y: 350*s }); // Yellow start (39)
-        p.push({ x: 510*s, y: 350*s }); p.push({ x: 470*s, y: 350*s }); p.push({ x: 430*s, y: 350*s }); p.push({ x: 390*s, y: 350*s });
-        p.push({ x: 350*s, y: 390*s }); p.push({ x: 350*s, y: 430*s }); p.push({ x: 350*s, y: 470*s }); p.push({ x: 350*s, y: 510*s }); p.push({ x: 350*s, y: 550*s });
-        p.push({ x: 310*s, y: 550*s }); p.push({ x: 270*s, y: 550*s });
+        // Start at Red's position 0, proceed clockwise, ensuring correct order
+        // Red Path (bottom, positions 0-11)
+        p[0] = { x: 240*s, y: 550*s }; // Red start (0)
+        p[1] = { x: 240*s, y: 510*s }; p[2] = { x: 240*s, y: 470*s }; p[3] = { x: 240*s, y: 430*s }; p[4] = { x: 240*s, y: 390*s };
+        p[5] = { x: 190*s, y: 350*s }; p[6] = { x: 150*s, y: 350*s }; p[7] = { x: 110*s, y: 350*s }; p[8] = { x: 70*s, y: 350*s }; p[9] = { x: 30*s, y: 350*s };
+        p[10] = { x: 30*s, y: 310*s }; p[11] = { x: 30*s, y: 270*s };
+        // Green Path (left, positions 12-23)
+        p[12] = { x: 30*s, y: 230*s }; // Green start (13, adjusted to 12 to test offset)
+        p[13] = { x: 70*s, y: 230*s }; p[14] = { x: 110*s, y: 230*s }; p[15] = { x: 150*s, y: 230*s }; p[16] = { x: 190*s, y: 230*s };
+        p[17] = { x: 230*s, y: 190*s }; p[18] = { x: 230*s, y: 150*s }; p[19] = { x: 230*s, y: 110*s }; p[20] = { x: 230*s, y: 70*s }; p[21] = { x: 230*s, y: 30*s };
+        p[22] = { x: 270*s, y: 30*s }; p[23] = { x: 310*s, y: 30*s };
+        // Blue Path (top, positions 24-35)
+        p[24] = { x: 350*s, y: 30*s }; // Blue start (26, adjusted to 24)
+        p[25] = { x: 350*s, y: 70*s }; p[26] = { x: 350*s, y: 110*s }; p[27] = { x: 350*s, y: 150*s }; p[28] = { x: 350*s, y: 190*s };
+        p[29] = { x: 390*s, y: 230*s }; p[30] = { x: 430*s, y: 230*s }; p[31] = { x: 470*s, y: 230*s }; p[32] = { x: 510*s, y: 230*s }; p[33] = { x: 550*s, y: 230*s };
+        p[34] = { x: 550*s, y: 270*s }; p[35] = { x: 550*s, y: 310*s };
+        // Yellow Path (right, positions 36-47)
+        p[36] = { x: 550*s, y: 350*s }; // Yellow start (39, adjusted to 36)
+        p[37] = { x: 510*s, y: 350*s }; p[38] = { x: 470*s, y: 350*s }; p[39] = { x: 430*s, y: 350*s }; p[40] = { x: 390*s, y: 350*s };
+        p[41] = { x: 350*s, y: 390*s }; p[42] = { x: 350*s, y: 430*s }; p[43] = { x: 350*s, y: 470*s }; p[44] = { x: 350*s, y: 510*s }; p[45] = { x: 350*s, y: 550*s };
+        p[46] = { x: 310*s, y: 550*s }; p[47] = { x: 270*s, y: 550*s };
+        // Complete the circle back to Red (positions 48-51)
+        p[48] = { x: 270*s, y: 510*s }; p[49] = { x: 270*s, y: 470*s }; p[50] = { x: 270*s, y: 430*s }; p[51] = { x: 270*s, y: 390*s };
         return p;
     }
 
@@ -228,9 +231,8 @@ class Game {
                 }
                 piece.style.left = `${coords.x * scale}px`;
                 piece.style.top = `${coords.y * scale}px`;
-                piece.style.transform = 'translate(-50%, -50%)'; // Center piece on cell
+                piece.style.transform = 'translate(-50%, -50%)';
                 this.boardContainer.appendChild(piece);
-                // Debug: Log position and coordinates
                 console.log(`${color} piece ${i}: pos=${pos}, coords=(${coords.x * scale}, ${coords.y * scale})`);
             });
         }
@@ -246,8 +248,8 @@ class Game {
             2: 'rotateY(-90deg)',
             3: 'rotateY(-180deg)',
             4: 'rotateY(90deg)',
-            5: 'rotateX(-90deg)',
-            6: 'rotateX(90deg)'
+            5: 'rotateX(90deg)',
+            6: 'rotateX(-90deg)'
         };
 
         dice.classList.add('rolling');
@@ -332,9 +334,9 @@ class Game {
             if (this.diceRoll === 6) {
                 player.pieces[pieceIndex] = player.startPos;
                 this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span> moved a piece to position ${player.startPos}!`);
-                console.log(`${color} piece ${pieceIndex} moved to startPos=${player.startPos}`); // Debug
+                console.log(`${color} piece ${pieceIndex} moved to startPos=${player.startPos}, coords=(${this.path[player.startPos].x}, ${this.path[player.startPos].y})`);
                 this.handleCapture(player.startPos, color);
-                this.drawPieces(); // Immediate redraw
+                this.drawPieces();
                 this.endTurn();
             } else {
                 this.updateStatus('You need a 6 to start.');
@@ -384,7 +386,7 @@ class Game {
 
     handleCapture(pos, attackerColor) {
         if (this.safeSpots.includes(pos)) {
-            console.log(`No capture at pos ${pos} (safe spot)`); // Debug
+            console.log(`No capture at pos ${pos} (safe spot)`);
             return;
         }
 
@@ -394,14 +396,14 @@ class Game {
                 player.pieces = player.pieces.map(p => {
                     if (p === pos && p < 52) {
                         this.updateStatus(`<span style="color: ${attackerColor};">${this.capitalize(attackerColor)}</span> captured <span style="color: ${color};">${this.capitalize(color)}</span>'s piece!`);
-                        console.log(`${attackerColor} captured ${color}'s piece at pos ${pos}`); // Debug
+                        console.log(`${attackerColor} captured ${color}'s piece at pos ${pos}`);
                         return -1;
                     }
                     return p;
                 });
             }
         }
-        this.drawPieces(); // Immediate redraw after capture
+        this.drawPieces();
     }
 
     endTurn() {
