@@ -255,6 +255,8 @@ button#roll:active {
     height: 100vh;
     background-color: var(--board-bg);
     color: var(--text-light);
+    z-index: 200;
+    position: relative;
 }
 
 #start-screen h2 {
