@@ -1,10 +1,10 @@
 class Player {
     constructor(color, startPosition, homeEntryIndex) {
         this.color = color;
-        this.startPosition = startPosition; // Index on board where tokens start
-        this.homeEntryIndex = homeEntryIndex; // Index where token enters home
-        this.tokens = Array(4).fill("base"); // 'base', 0-51, or 'home-X'
-        this.completed = 0; // Number of tokens that reached home-5
+        this.startPosition = startPosition;
+        this.homeEntryIndex = homeEntryIndex;
+        this.tokens = Array(4).fill("base");
+        this.completed = 0;
     }
 }
 
@@ -53,7 +53,7 @@ class Game {
         this.currentPlayer = 'red';
         this.diceRoll = 0;
         this.gameover = false;
-        this.safeSpots = [1, 9, 14, 22, 27, 35, 40, 48]; // Updated to match your logic
+        this.safeSpots = [1, 9, 14, 22, 27, 35, 40, 48];
         this.boardLength = 52;
         this.homeLength = 6;
         this.boardSize = 600;
@@ -70,7 +70,7 @@ class Game {
         this.winnerMessage = document.getElementById('winner-message');
 
         this.rollBtn.addEventListener('click', () => this.rollDice());
-        this.addSimulateButton(); // Add button for 100-turn simulation
+        this.addSimulateButton();
         this.drawBoard();
         this.drawPieces();
         this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice!`);
@@ -103,8 +103,8 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        // Grid-based coordinates, adjusted for 10px border, 40px cells
-        p[0] = { x: 300 * s, y: 570 * s }; // Red start (0)
+        // Grid-based coordinates, 40px cells, 10px border, centered on cells
+        p[0] = { x: 300 * s, y: 570 * s }; // Red start (0), bottom center
         p[1] = { x: 260 * s, y: 570 * s }; p[2] = { x: 220 * s, y: 570 * s }; p[3] = { x: 180 * s, y: 570 * s };
         p[4] = { x: 140 * s, y: 570 * s }; p[5] = { x: 100 * s, y: 530 * s }; p[6] = { x: 100 * s, y: 490 * s };
         p[7] = { x: 100 * s, y: 450 * s }; p[8] = { x: 100 * s, y: 410 * s }; p[9] = { x: 100 * s, y: 370 * s };
@@ -236,7 +236,7 @@ class Game {
         for (const color in this.players) {
             const player = this.players[color];
             player.tokens.forEach((pos, i) => {
-                if (typeof pos === "string" && pos.startsWith("home-") && parseInt(pos.split("-")[1]) === 5) return; // Skip finished tokens
+                if (typeof pos === "string" && pos.startsWith("home-") && parseInt(pos.split("-")[1]) === 5) return;
                 const piece = document.createElement('div');
                 piece.className = `piece ${color}-piece`;
                 piece.dataset.color = color;
@@ -262,6 +262,7 @@ class Game {
     rollDice() {
         if (this.gameover) return;
         this.diceRoll = Math.floor(Math.random() * 6) + 1;
+        console.log(`Rolled: ${this.diceRoll}`); // Debug roll value
 
         const dice = document.getElementById('dice');
         const rotations = {
@@ -278,7 +279,7 @@ class Game {
         setTimeout(() => {
             dice.classList.remove('rolling');
             dice.style.transform = rotations[this.diceRoll];
-            this.result.textContent = `You rolled: ${this.diceRoll}`;
+            this.result.textContent = `You rolled: ${this.diceRoll}`; // Ensure UI reflects correct roll
             this.updateStatus(`${this.capitalize(this.currentPlayer)} rolled a ${this.diceRoll}. Select a piece to move.`);
             if (this.hasValidMoves()) {
                 this.highlightMovablePieces();
@@ -306,7 +307,7 @@ class Game {
                 const homePos = newPosition - player.homeEntryIndex - 1;
                 return homePos < this.homeLength;
             }
-            if (newPosition >= this.boardLength) return true; // Wrap around
+            if (newPosition >= this.boardLength) return true;
             return true;
         }
         if (typeof pos === "string" && pos.startsWith("home-")) {
@@ -350,6 +351,7 @@ class Game {
         const player = this.players[color];
         const currentPos = player.tokens[tokenIndex];
 
+        console.log(`Attempting move: color=${color}, token=${tokenIndex}, pos=${currentPos}, roll=${this.diceRoll}`); // Debug
         if (!this.isValidMove(currentPos, tokenIndex)) {
             this.updateStatus('Invalid move! Select another piece.');
             return;
@@ -404,6 +406,7 @@ class Game {
                         this.showGameOver(color);
                     }
                 }
+                this.drawPieces();
             }
         }
 
