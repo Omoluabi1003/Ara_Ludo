@@ -29,7 +29,7 @@ class StartScreen {
 
         this.startGameButton.addEventListener('click', () => {
             this.startScreen.style.display = 'none';
-            this.onStartGame(this.numPlayers);
+            new Game(this.numPlayers);
         });
     }
 }
@@ -370,7 +370,5 @@ class Game {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const startScreen = new StartScreen(numPlayers => {
-        new Game(numPlayers);
-    });
+    const startScreen = new StartScreen();
 });
