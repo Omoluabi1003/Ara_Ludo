@@ -43,7 +43,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: var(--safe-bg);
-    border: 10px solid #2c3e50;
+    border: 10px solid #ffffff; /* White border as in video */
     box-sizing: border-box;
     position: relative;
 }
@@ -51,29 +51,44 @@ body {
 .home-base {
     position: absolute;
     box-sizing: border-box;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.4); /* Slightly more opaque border */
 }
 
-.red-base { background-color: rgba(231, 76, 60, 0.3); }
-.green-base { background-color: rgba(46, 204, 113, 0.3); }
-.blue-base { background-color: rgba(52, 152, 219, 0.3); }
-.yellow-base { background-color: rgba(241, 196, 15, 0.3); }
+.red-base { background-color: rgba(231, 76, 60, 0.4); }
+.green-base { background-color: rgba(46, 204, 113, 0.4); }
+.blue-base { background-color: rgba(52, 152, 219, 0.4); }
+.yellow-base { background-color: rgba(241, 196, 15, 0.4); }
 
 .path-cell {
     position: absolute;
     box-sizing: border-box;
-    border: 1px solid rgba(255,255,255,0.15);
-    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    background-color: rgba(255,255,255,0.15);
 }
 
-.home-path-cell.red-path { background-color: rgba(231, 76, 60, 0.3); }
-.home-path-cell.green-path { background-color: rgba(46, 204, 113, 0.3); }
-.home-path-cell.blue-path { background-color: rgba(52, 152, 219, 0.3); }
-.home-path-cell.yellow-path { background-color: rgba(241, 196, 15, 0.3); }
+.safe-spot {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gold"><path d="M12 .587l3.668 7.431 8.332 1.209-6.001 5.853 1.416 8.265L12 18.897l-7.415 4.448 1.416-8.265-6.001-5.853 8.332-1.209z"/></svg>');
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid gold;
+}
+
+.home-path-cell.red-path { background-color: rgba(231, 76, 60, 0.5); }
+.home-path-cell.green-path { background-color: rgba(46, 204, 113, 0.5); }
+.home-path-cell.blue-path { background-color: rgba(52, 152, 219, 0.5); }
+.home-path-cell.yellow-path { background-color: rgba(241, 196, 15, 0.5); }
+
+.center-triangle {
+    position: absolute;
+    background-color: #ffffff;
+    border: 2px solid var(--text-dark);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
 
 .piece {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     position: absolute;
     display: flex;
@@ -83,11 +98,12 @@ body {
     color: var(--text-light);
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    border: 3px solid rgba(0,0,0,0.3);
+    border: 3px solid rgba(0,0,0,0.4);
     box-shadow:
         inset 0 -4px 8px rgba(0,0,0,0.4),
         0 4px 12px rgba(0,0,0,0.4);
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    transform: translate(-50%, -50%);
 }
 
 .red-piece { background: radial-gradient(circle at 50% 120%, var(--red), #c0392b); }
@@ -96,11 +112,12 @@ body {
 .yellow-piece { background: radial-gradient(circle at 50% 120%, var(--yellow), #f39c12); }
 
 .piece.highlight {
-    transform: scale(1.2) translateY(-5px);
+    transform: scale(1.2) translate(-50%, -50%);
     box-shadow:
         inset 0 -5px 12px rgba(0,0,0,0.5),
-        0 10px 20px rgba(0,0,0,0.5);
-    border-color: rgba(255, 255, 255, 0.8);
+        0 10px 20px rgba(0,0,0,0.5),
+        0 0 15px var(--text-light);
+    border-color: rgba(255, 255, 255, 0.9);
 }
 
 #controls {
@@ -111,16 +128,16 @@ body {
     padding: 30px;
     background-color: var(--safe-bg);
     border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     width: 280px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 #controls h1 {
     font-size: 2.5em;
     color: var(--text-light);
     margin: 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
 }
 
 #dice-container {
@@ -179,19 +196,19 @@ button#roll {
     color: var(--text-light);
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 button#roll:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
 }
 
 button#roll:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 #result {
@@ -206,9 +223,9 @@ button#roll:active {
     min-height: 80px;
     font-style: normal;
     padding: 10px;
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0,0,0,0.3);
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
     width: 100%;
     line-height: 1.5;
 }
@@ -263,7 +280,7 @@ button#roll:active {
     font-size: 3.5em;
     color: var(--text-light);
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
 }
 
 #player-selection {
@@ -337,10 +354,10 @@ button#roll:active {
     }
 
     .piece {
-        width: 6.5vw;
-        height: 6.5vw;
-        border-width: 3px;
-        font-size: 3vw;
+        width: 6vw;
+        height: 6vw;
+        border-width: 2px;
+        font-size: 2.5vw;
     }
 
     #controls {
