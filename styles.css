@@ -8,10 +8,11 @@
     --yellow: #f0ad4e;
     --text-dark: #333;
     --text-light: #fff;
+    --font-primary: 'Poppins', sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary);
     text-align: center;
     background-color: var(--board-bg);
     color: var(--text-dark);
@@ -20,18 +21,23 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.19' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 #game-container {
     display: flex;
-    gap: 30px;
-    align-items: center;
+    gap: 40px;
+    align-items: flex-start;
+    padding: 20px;
 }
 
 #board-container {
     position: relative;
     width: 600px;
     height: 600px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    overflow: hidden;
 }
 
 #board {
@@ -39,9 +45,6 @@ body {
     height: 100%;
     background-image: url('ludo.png');
     background-size: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 .piece {
@@ -55,55 +58,99 @@ body {
     font-weight: bold;
     color: var(--text-light);
     cursor: pointer;
-    transition: all 0.3s ease;
-    border: 3px solid rgba(0,0,0,0.3);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    border: 4px solid rgba(255,255,255,0.5);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
 }
 
-.red-piece { background-color: var(--red); }
-.green-piece { background-color: var(--green); }
-.blue-piece { background-color: var(--blue); }
-.yellow-piece { background-color: var(--yellow); }
+.red-piece { background: radial-gradient(circle, #ff7e79, var(--red)); }
+.green-piece { background: radial-gradient(circle, #7de27d, var(--green)); }
+.blue-piece { background: radial-gradient(circle, #6caeff, var(--blue)); }
+.yellow-piece { background: radial-gradient(circle, #f5d37e, var(--yellow)); }
 
-.piece:hover {
-    transform: scale(1.15);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+.piece.highlight {
+    transform: scale(1.2);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    border-color: #fff;
 }
 
 #controls {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding: 25px;
+    gap: 25px;
+    padding: 30px;
     background-color: var(--cell-bg);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    width: 280px;
 }
 
+#controls h1 {
+    font-size: 2.5em;
+    color: var(--blue);
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+#dice-container {
+    perspective: 1000px;
+}
+
+#dice {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+}
+
+.dice-face {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border: 2px solid #ccc;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.face-1 { transform: rotateY(0deg) translateZ(30px); }
+.face-2 { transform: rotateY(90deg) translateZ(30px); }
+.face-3 { transform: rotateY(180deg) translateZ(30px); }
+.face-4 { transform: rotateY(-90deg) translateZ(30px); }
+.face-5 { transform: rotateX(90deg) translateZ(30px); }
+.face-6 { transform: rotateX(-90deg) translateZ(30px); }
+
 button#roll {
-    padding: 15px 30px;
-    font-size: 22px;
+    padding: 15px 35px;
+    font-size: 24px;
     border: none;
-    border-radius: 8px;
-    background-color: var(--blue);
+    border-radius: 10px;
+    background: linear-gradient(145deg, var(--blue), #367abc);
     color: var(--text-light);
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
 button#roll:hover {
-    background-color: #367abc;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
 button#roll:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 #result {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
     color: var(--text-dark);
 }
@@ -111,6 +158,101 @@ button#roll:active {
 #status {
     font-size: 18px;
     color: #555;
-    min-height: 60px;
-    font-style: italic;
+    min-height: 80px;
+    font-style: normal;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    width: 100%;
+    line-height: 1.5;
+}
+
+.current-player-red #controls h1 { color: var(--red); }
+.current-player-green #controls h1 { color: var(--green); }
+.current-player-blue #controls h1 { color: var(--blue); }
+.current-player-yellow #controls h1 { color: var(--yellow); }
+
+#game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 2em;
+    z-index: 100;
+}
+
+#game-over-overlay h2 {
+    font-size: 3em;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+#game-over-overlay p {
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+@media (max-width: 950px) {
+    #game-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    #controls {
+        width: 90%;
+        max-width: 400px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 650px) {
+    body {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    #board-container {
+        width: 95vw;
+        height: 95vw;
+    }
+
+    .piece {
+        width: 6.5vw;
+        height: 6.5vw;
+        border-width: 3px;
+        font-size: 3vw;
+    }
+
+    #controls {
+        gap: 15px;
+    }
+
+    #controls h1 {
+        font-size: 2em;
+    }
+
+    button#roll {
+        padding: 12px 25px;
+        font-size: 20px;
+    }
+
+    #result {
+        font-size: 22px;
+    }
+
+    #status {
+        font-size: 16px;
+    }
 }

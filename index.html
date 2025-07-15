@@ -6,20 +6,37 @@
     <title>Ara Ludo by Omoluabi Productions</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="game-container">
-        <div id="board-container">
+    <main id="game-container">
+        <section id="board-container" aria-label="Ludo Board">
             <div id="board"></div>
+            <div id="game-over-overlay">
+                <h2 id="winner-message"></h2>
+                <p>Thank you for playing!</p>
+            </div>
             <!-- Pieces will be added here by JavaScript -->
-        </div>
-        <div id="controls">
+        </section>
+        <aside id="controls" aria-label="Game Controls">
             <h1>Ara Ludo</h1>
-            <button id="roll">Roll Dice</button>
-            <div id="result"></div>
-            <div id="status"></div>
-        </div>
-    </div>
+            <div id="dice-container" aria-live="polite">
+                <div id="dice" aria-label="Dice">
+                    <div class="dice-face face-1">1</div>
+                    <div class="dice-face face-2">2</div>
+                    <div class="dice-face face-3">3</div>
+                    <div class="dice-face face-4">4</div>
+                    <div class="dice-face face-5">5</div>
+                    <div class="dice-face face-6">6</div>
+                </div>
+            </div>
+            <button id="roll" aria-label="Roll Dice">Roll Dice</button>
+            <div id="result" aria-live="polite"></div>
+            <div id="status" aria-live="polite"></div>
+        </aside>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

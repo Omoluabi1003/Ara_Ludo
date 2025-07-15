@@ -23,6 +23,7 @@ class Game {
         this.diceRoll = 0;
         this.gameover = false;
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
+        this.boardSize = 600; // Base size, will be used for scaling
         this.path = this.generatePath();
         this.homePaths = this.generateHomePaths();
         this.homeBaseCoords = this.generateHomeBaseCoords();
@@ -31,10 +32,15 @@ class Game {
         this.result = document.getElementById('result');
         this.status = document.getElementById('status');
         this.boardContainer = document.getElementById('board-container');
+        this.gameOverOverlay = document.getElementById('game-over-overlay');
+        this.winnerMessage = document.getElementById('winner-message');
 
         this.rollBtn.addEventListener('click', () => this.rollDice());
         this.drawPieces();
-        this.updateStatus(`${this.capitalize(this.currentPlayer)}'s turn. Roll the dice.`);
+        this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Let's roll!`);
+        this.updatePlayerTurnIndicator();
+
+        window.addEventListener('resize', () => this.drawPieces());
     }
 
     capitalize(str) {
@@ -42,46 +48,52 @@ class Game {
     }
 
     generatePath() {
+        const s = this.boardSize / 600; // scaling factor
         const p = [];
         // Red Path (bottom)
-        p.push({ x: 240, y: 550 }); p.push({ x: 240, y: 510 }); p.push({ x: 240, y: 470 }); p.push({ x: 240, y: 430 }); p.push({ x: 240, y: 390 });
-        p.push({ x: 190, y: 350 }); p.push({ x: 150, y: 350 }); p.push({ x: 110, y: 350 }); p.push({ x: 70, y: 350 }); p.push({ x: 30, y: 350 });
-        p.push({ x: 30, y: 310 }); p.push({ x: 30, y: 270 });
+        p.push({ x: 240*s, y: 550*s }); p.push({ x: 240*s, y: 510*s }); p.push({ x: 240*s, y: 470*s }); p.push({ x: 240*s, y: 430*s }); p.push({ x: 240*s, y: 390*s });
+        p.push({ x: 190*s, y: 350*s }); p.push({ x: 150*s, y: 350*s }); p.push({ x: 110*s, y: 350*s }); p.push({ x: 70*s, y: 350*s }); p.push({ x: 30*s, y: 350*s });
+        p.push({ x: 30*s, y: 310*s }); p.push({ x: 30*s, y: 270*s });
         // Green Path (left)
-        p.push({ x: 30, y: 230 }); p.push({ x: 70, y: 230 }); p.push({ x: 110, y: 230 }); p.push({ x: 150, y: 230 }); p.push({ x: 190, y: 230 });
-        p.push({ x: 230, y: 190 }); p.push({ x: 230, y: 150 }); p.push({ x: 230, y: 110 }); p.push({ x: 230, y: 70 }); p.push({ x: 230, y: 30 });
-        p.push({ x: 270, y: 30 }); p.push({ x: 310, y: 30 });
+        p.push({ x: 30*s, y: 230*s }); p.push({ x: 70*s, y: 230*s }); p.push({ x: 110*s, y: 230*s }); p.push({ x: 150*s, y: 230*s }); p.push({ x: 190*s, y: 230*s });
+        p.push({ x: 230*s, y: 190*s }); p.push({ x: 230*s, y: 150*s }); p.push({ x: 230*s, y: 110*s }); p.push({ x: 230*s, y: 70*s }); p.push({ x: 230*s, y: 30*s });
+        p.push({ x: 270*s, y: 30*s }); p.push({ x: 310*s, y: 30*s });
         // Blue Path (top)
-        p.push({ x: 350, y: 30 }); p.push({ x: 350, y: 70 }); p.push({ x: 350, y: 110 }); p.push({ x: 350, y: 150 }); p.push({ x: 350, y: 190 });
-        p.push({ x: 390, y: 230 }); p.push({ x: 430, y: 230 }); p.push({ x: 470, y: 230 }); p.push({ x: 510, y: 230 }); p.push({ x: 550, y: 230 });
-        p.push({ x: 550, y: 270 }); p.push({ x: 550, y: 310 });
+        p.push({ x: 350*s, y: 30*s }); p.push({ x: 350*s, y: 70*s }); p.push({ x: 350*s, y: 110*s }); p.push({ x: 350*s, y: 150*s }); p.push({ x: 350*s, y: 190*s });
+        p.push({ x: 390*s, y: 230*s }); p.push({ x: 430*s, y: 230*s }); p.push({ x: 470*s, y: 230*s }); p.push({ x: 510*s, y: 230*s }); p.push({ x: 550*s, y: 230*s });
+        p.push({ x: 550*s, y: 270*s }); p.push({ x: 550*s, y: 310*s });
         // Yellow Path (right)
-        p.push({ x: 550, y: 350 }); p.push({ x: 510, y: 350 }); p.push({ x: 470, y: 350 }); p.push({ x: 430, y: 350 }); p.push({ x: 390, y: 350 });
-        p.push({ x: 350, y: 390 }); p.push({ x: 350, y: 430 }); p.push({ x: 350, y: 470 }); p.push({ x: 350, y: 510 }); p.push({ x: 350, y: 550 });
-        p.push({ x: 310, y: 550 }); p.push({ x: 270, y: 550 });
+        p.push({ x: 550*s, y: 350*s }); p.push({ x: 510*s, y: 350*s }); p.push({ x: 470*s, y: 350*s }); p.push({ x: 430*s, y: 350*s }); p.push({ x: 390*s, y: 350*s });
+        p.push({ x: 350*s, y: 390*s }); p.push({ x: 350*s, y: 430*s }); p.push({ x: 350*s, y: 470*s }); p.push({ x: 350*s, y: 510*s }); p.push({ x: 350*s, y: 550*s });
+        p.push({ x: 310*s, y: 550*s }); p.push({ x: 270*s, y: 550*s });
         return p;
     }
 
     generateHomePaths() {
+        const s = this.boardSize / 600; // scaling factor
         return {
-            red: [ { x: 270, y: 510 }, { x: 270, y: 470 }, { x: 270, y: 430 }, { x: 270, y: 390 }, { x: 270, y: 350 }, { x: 270, y: 310 } ],
-            green: [ { x: 70, y: 270 }, { x: 110, y: 270 }, { x: 150, y: 270 }, { x: 190, y: 270 }, { x: 230, y: 270 }, { x: 270, y: 270 } ],
-            blue: [ { x: 310, y: 70 }, { x: 310, y: 110 }, { x: 310, y: 150 }, { x: 310, y: 190 }, { x: 310, y: 230 }, { x: 310, y: 270 } ],
-            yellow: [ { x: 510, y: 310 }, { x: 470, y: 310 }, { x: 430, y: 310 }, { x: 390, y: 310 }, { x: 350, y: 310 }, { x: 310, y: 310 } ]
+            red: [ { x: 270*s, y: 510*s }, { x: 270*s, y: 470*s }, { x: 270*s, y: 430*s }, { x: 270*s, y: 390*s }, { x: 270*s, y: 350*s }, { x: 270*s, y: 310*s } ],
+            green: [ { x: 70*s, y: 270*s }, { x: 110*s, y: 270*s }, { x: 150*s, y: 270*s }, { x: 190*s, y: 270*s }, { x: 230*s, y: 270*s }, { x: 270*s, y: 270*s } ],
+            blue: [ { x: 310*s, y: 70*s }, { x: 310*s, y: 110*s }, { x: 310*s, y: 150*s }, { x: 310*s, y: 190*s }, { x: 310*s, y: 230*s }, { x: 310*s, y: 270*s } ],
+            yellow: [ { x: 510*s, y: 310*s }, { x: 470*s, y: 310*s }, { x: 430*s, y: 310*s }, { x: 390*s, y: 310*s }, { x: 350*s, y: 310*s }, { x: 310*s, y: 310*s } ]
         };
     }
 
     generateHomeBaseCoords() {
+        const s = this.boardSize / 600; // scaling factor
         return {
-            red: [ { x: 60, y: 450 }, { x: 150, y: 450 }, { x: 60, y: 540 }, { x: 150, y: 540 } ],
-            green: [ { x: 60, y: 60 }, { x: 150, y: 60 }, { x: 60, y: 150 }, { x: 150, y: 150 } ],
-            blue: [ { x: 450, y: 60 }, { x: 540, y: 60 }, { x: 450, y: 150 }, { x: 540, y: 150 } ],
-            yellow: [ { x: 450, y: 450 }, { x: 540, y: 450 }, { x: 450, y: 540 }, { x: 540, y: 540 } ]
+            red: [ { x: 60*s, y: 450*s }, { x: 150*s, y: 450*s }, { x: 60*s, y: 540*s }, { x: 150*s, y: 540*s } ],
+            green: [ { x: 60*s, y: 60*s }, { x: 150*s, y: 60*s }, { x: 60*s, y: 150*s }, { x: 150*s, y: 150*s } ],
+            blue: [ { x: 450*s, y: 60*s }, { x: 540*s, y: 60*s }, { x: 450*s, y: 150*s }, { x: 540*s, y: 150*s } ],
+            yellow: [ { x: 450*s, y: 450*s }, { x: 540*s, y: 450*s }, { x: 450*s, y: 540*s }, { x: 540*s, y: 540*s } ]
         };
     }
 
     drawPieces() {
         this.boardContainer.querySelectorAll('.piece').forEach(p => p.remove());
+        const boardRect = this.boardContainer.getBoundingClientRect();
+        const scale = boardRect.width / this.boardSize;
+
         for (const color in this.players) {
             const player = this.players[color];
             player.pieces.forEach((pos, i) => {
@@ -98,8 +110,8 @@ class Game {
                 } else {
                     coords = this.path[pos];
                 }
-                piece.style.left = `${coords.x}px`;
-                piece.style.top = `${coords.y}px`;
+                piece.style.left = `${coords.x * scale}px`;
+                piece.style.top = `${coords.y * scale}px`;
                 this.boardContainer.appendChild(piece);
             });
         }
@@ -108,9 +120,40 @@ class Game {
     rollDice() {
         if (this.gameover) return;
         this.diceRoll = Math.floor(Math.random() * 6) + 1;
-        this.result.textContent = `You rolled: ${this.diceRoll}`;
-        this.updateStatus(`${this.capitalize(this.currentPlayer)}'s turn. Rolled a ${this.diceRoll}. Click a piece to move.`);
-        this.addPieceClickListeners();
+
+        const dice = document.getElementById('dice');
+        const rotations = {
+            1: 'rotateY(0deg)',
+            2: 'rotateY(-90deg)',
+            3: 'rotateY(-180deg)',
+            4: 'rotateY(90deg)',
+            5: 'rotateX(-90deg)',
+            6: 'rotateX(90deg)'
+        };
+
+        // Spin the dice
+        dice.style.transform = `rotateX(${Math.random() * 3600}deg) rotateY(${Math.random() * 3600}deg)`;
+
+        setTimeout(() => {
+            dice.style.transform = rotations[this.diceRoll];
+            this.result.textContent = `You rolled: ${this.diceRoll}`;
+            this.updateStatus(`${this.capitalize(this.currentPlayer)}'s turn. Rolled a ${this.diceRoll}. Click a piece to move.`);
+            this.highlightMovablePieces();
+            this.addPieceClickListeners();
+        }, 1000);
+    }
+
+    highlightMovablePieces() {
+        document.querySelectorAll('.piece.highlight').forEach(p => p.classList.remove('highlight'));
+        const player = this.players[this.currentPlayer];
+        player.pieces.forEach((pos, i) => {
+            if (pos !== 58) { // Not finished
+                const pieceElement = document.querySelector(`.piece[data-color="${this.currentPlayer}"][data-index="${i}"]`);
+                if (pieceElement) {
+                    pieceElement.classList.add('highlight');
+                }
+            }
+        });
     }
 
     addPieceClickListeners() {
@@ -172,11 +215,17 @@ class Game {
 
         if (player.finishedPieces === 4) {
             this.gameover = true;
-            this.updateStatus(`${this.capitalize(color)} wins! Congratulations!`);
-            this.rollBtn.disabled = true;
+            this.showGameOver(color);
         } else {
             this.endTurn();
         }
+    }
+
+    showGameOver(winner) {
+        this.winnerMessage.textContent = `${this.capitalize(winner)} Wins!`;
+        this.gameOverOverlay.style.display = 'flex';
+        this.rollBtn.disabled = true;
+        this.updateStatus(`Congratulations ${this.capitalize(winner)}!`);
     }
 
     handleCapture(pos, attackerColor) {
@@ -187,7 +236,7 @@ class Game {
                 const player = this.players[color];
                 player.pieces = player.pieces.map(p => {
                     if (p === pos) {
-                        this.updateStatus(`${this.capitalize(attackerColor)} captured ${this.capitalize(color)}'s piece!`);
+                        this.updateStatus(`<span style="color: ${attackerColor};">${this.capitalize(attackerColor)}</span> captured <span style="color: ${color};">${this.capitalize(color)}</span>'s piece!`);
                         return -1; // Send back to base
                     }
                     return p;
@@ -199,6 +248,7 @@ class Game {
     endTurn() {
         this.drawPieces();
         this.removePieceClickListeners();
+        document.querySelectorAll('.piece.highlight').forEach(p => p.classList.remove('highlight'));
         if (!this.gameover) {
             this.switchPlayer();
         }
@@ -209,12 +259,21 @@ class Game {
             const playerColors = Object.keys(this.players);
             const currentIndex = playerColors.indexOf(this.currentPlayer);
             this.currentPlayer = playerColors[(currentIndex + 1) % playerColors.length];
+        } else {
+            this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn again! Roll the dice.`);
         }
-        this.updateStatus(`${this.capitalize(this.currentPlayer)}'s turn. Roll the dice.`);
+        this.updatePlayerTurnIndicator();
+    }
+
+    updatePlayerTurnIndicator() {
+        document.body.className = `current-player-${this.currentPlayer}`;
+         if (this.diceRoll !== 6) {
+            this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice.`);
+        }
     }
 
     updateStatus(message) {
-        this.status.textContent = message;
+        this.status.innerHTML = message;
     }
 }
 
