@@ -281,10 +281,15 @@ button#roll:active {
     transition: all 0.3s ease;
 }
 
-.player-option.selected,
 .player-option:hover {
     background-color: var(--blue);
     color: var(--text-light);
+}
+
+.player-option.selected {
+    background-color: var(--green);
+    color: var(--text-light);
+    border-color: var(--green);
 }
 
 #start-game {
