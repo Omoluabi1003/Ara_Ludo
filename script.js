@@ -353,7 +353,7 @@ class Game {
         const player = this.players[color];
         const currentPos = player.tokens[tokenIndex];
 
-        console.log(`Move attempt: color=${color}, token=${tokenIndex}, pos=${currentPos}, roll=${this.diceRoll}`); // Debug roll
+        console.log(`Move attempt: color=${color}, token=${tokenIndex}, pos=${currentPos}, roll=${this.diceRoll}`);
         if (!this.isValidMove(currentPos, tokenIndex)) {
             this.updateStatus('Invalid move! Select another piece.');
             return;
