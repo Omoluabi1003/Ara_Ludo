@@ -370,7 +370,7 @@ class Game {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new StartScreen(numPlayers => {
+    const startScreen = new StartScreen(numPlayers => {
         new Game(numPlayers);
     });
 });
