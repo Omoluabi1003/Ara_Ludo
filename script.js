@@ -11,16 +11,13 @@ class Player {
     }
 }
 
-class Game {
-    constructor() {
+class StartScreen {
+    constructor(onStartGame) {
         this.startScreen = document.getElementById('start-screen');
-        this.gameContainer = document.getElementById('game-container');
         this.playerSelectionButtons = document.querySelectorAll('.player-option');
         this.startGameButton = document.getElementById('start-game');
-
-        this.numPlayers = 4; // Default
-
-        this.gameContainer.style.display = 'none';
+        this.onStartGame = onStartGame;
+        this.numPlayers = 4;
 
         this.playerSelectionButtons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -30,15 +27,20 @@ class Game {
             });
         });
 
-        this.startGameButton.addEventListener('click', () => this.startGame());
+        this.startGameButton.addEventListener('click', () => {
+            this.startScreen.style.display = 'none';
+            this.onStartGame(this.numPlayers);
+        });
     }
+}
 
-    startGame() {
-        this.startScreen.style.display = 'none';
+class Game {
+    constructor(numPlayers) {
+        this.gameContainer = document.getElementById('game-container');
         this.gameContainer.style.display = 'flex';
 
         const playerColors = ['red', 'green', 'blue', 'yellow'];
-        const activePlayers = playerColors.slice(0, this.numPlayers);
+        const activePlayers = playerColors.slice(0, numPlayers);
 
         this.players = {};
         const playerDefs = {
@@ -368,4 +370,6 @@ class Game {
     }
 }
 
-new Game();
+new StartScreen(numPlayers => {
+    new Game(numPlayers);
+});
