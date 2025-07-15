@@ -170,7 +170,6 @@ class Game {
             6: 'rotateX(90deg)'
         };
 
-        const dice = document.getElementById('dice');
         dice.classList.add('rolling');
 
         setTimeout(() => {
@@ -370,6 +369,8 @@ class Game {
     }
 }
 
-new StartScreen(numPlayers => {
-    new Game(numPlayers);
+document.addEventListener('DOMContentLoaded', () => {
+    new StartScreen(numPlayers => {
+        new Game(numPlayers);
+    });
 });
