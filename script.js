@@ -12,11 +12,10 @@ class Player {
 }
 
 class StartScreen {
-    constructor(onStartGame) {
+    constructor() {
         this.startScreen = document.getElementById('start-screen');
         this.playerSelectionButtons = document.querySelectorAll('.player-option');
         this.startGameButton = document.getElementById('start-game');
-        this.onStartGame = onStartGame;
         this.numPlayers = 4;
 
         this.playerSelectionButtons.forEach(button => {
@@ -58,7 +57,7 @@ class Game {
         this.diceRoll = 0;
         this.gameover = false;
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
-        this.boardSize = 600; // Base size, will be used for scaling
+        this.boardSize = 600;
         this.path = this.generatePath();
         this.homePaths = this.generateHomePaths();
         this.homeBaseCoords = this.generateHomeBaseCoords();
@@ -73,13 +72,28 @@ class Game {
         this.rollBtn.addEventListener('click', () => this.rollDice());
         this.drawBoard();
         this.drawPieces();
-        this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Let's roll!`);
+        this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice!`);
         this.updatePlayerTurnIndicator();
 
         window.addEventListener('resize', () => {
             this.drawBoard();
             this.drawPieces();
         });
+
+        // Add restart button to game-over overlay
+        const restartBtn = document.createElement('button');
+        restartBtn.textContent = 'Restart Game';
+        restartBtn.id = 'restart-game';
+        restartBtn.style.padding = '15px 30px';
+        restartBtn.style.fontSize = '1.2em';
+        restartBtn.style.marginTop = '20px';
+        restartBtn.style.backgroundColor = 'var(--green)';
+        restartBtn.style.color = 'var(--text-light)';
+        restartBtn.style.border = 'none';
+        restartBtn.style.borderRadius = '10px';
+        restartBtn.style.cursor = 'pointer';
+        restartBtn.addEventListener('click', () => location.reload());
+        this.gameOverOverlay.appendChild(restartBtn);
     }
 
     capitalize(str) {
@@ -87,21 +101,17 @@ class Game {
     }
 
     generatePath() {
-        const s = this.boardSize / 600; // scaling factor
+        const s = this.boardSize / 600;
         const p = [];
-        // Red Path (bottom)
         p.push({ x: 240*s, y: 550*s }); p.push({ x: 240*s, y: 510*s }); p.push({ x: 240*s, y: 470*s }); p.push({ x: 240*s, y: 430*s }); p.push({ x: 240*s, y: 390*s });
         p.push({ x: 190*s, y: 350*s }); p.push({ x: 150*s, y: 350*s }); p.push({ x: 110*s, y: 350*s }); p.push({ x: 70*s, y: 350*s }); p.push({ x: 30*s, y: 350*s });
         p.push({ x: 30*s, y: 310*s }); p.push({ x: 30*s, y: 270*s });
-        // Green Path (left)
         p.push({ x: 30*s, y: 230*s }); p.push({ x: 70*s, y: 230*s }); p.push({ x: 110*s, y: 230*s }); p.push({ x: 150*s, y: 230*s }); p.push({ x: 190*s, y: 230*s });
         p.push({ x: 230*s, y: 190*s }); p.push({ x: 230*s, y: 150*s }); p.push({ x: 230*s, y: 110*s }); p.push({ x: 230*s, y: 70*s }); p.push({ x: 230*s, y: 30*s });
         p.push({ x: 270*s, y: 30*s }); p.push({ x: 310*s, y: 30*s });
-        // Blue Path (top)
         p.push({ x: 350*s, y: 30*s }); p.push({ x: 350*s, y: 70*s }); p.push({ x: 350*s, y: 110*s }); p.push({ x: 350*s, y: 150*s }); p.push({ x: 350*s, y: 190*s });
         p.push({ x: 390*s, y: 230*s }); p.push({ x: 430*s, y: 230*s }); p.push({ x: 470*s, y: 230*s }); p.push({ x: 510*s, y: 230*s }); p.push({ x: 550*s, y: 230*s });
         p.push({ x: 550*s, y: 270*s }); p.push({ x: 550*s, y: 310*s });
-        // Yellow Path (right)
         p.push({ x: 550*s, y: 350*s }); p.push({ x: 510*s, y: 350*s }); p.push({ x: 470*s, y: 350*s }); p.push({ x: 430*s, y: 350*s }); p.push({ x: 390*s, y: 350*s });
         p.push({ x: 350*s, y: 390*s }); p.push({ x: 350*s, y: 430*s }); p.push({ x: 350*s, y: 470*s }); p.push({ x: 350*s, y: 510*s }); p.push({ x: 350*s, y: 550*s });
         p.push({ x: 310*s, y: 550*s }); p.push({ x: 270*s, y: 550*s });
@@ -109,7 +119,7 @@ class Game {
     }
 
     generateHomePaths() {
-        const s = this.boardSize / 600; // scaling factor
+        const s = this.boardSize / 600;
         return {
             red: [ { x: 270*s, y: 510*s }, { x: 270*s, y: 470*s }, { x: 270*s, y: 430*s }, { x: 270*s, y: 390*s }, { x: 270*s, y: 350*s }, { x: 270*s, y: 310*s } ],
             green: [ { x: 70*s, y: 270*s }, { x: 110*s, y: 270*s }, { x: 150*s, y: 270*s }, { x: 190*s, y: 270*s }, { x: 230*s, y: 270*s }, { x: 270*s, y: 270*s } ],
@@ -119,13 +129,74 @@ class Game {
     }
 
     generateHomeBaseCoords() {
-        const s = this.boardSize / 600; // scaling factor
+        const s = this.boardSize / 600;
         return {
             red: [ { x: 60*s, y: 450*s }, { x: 150*s, y: 450*s }, { x: 60*s, y: 540*s }, { x: 150*s, y: 540*s } ],
             green: [ { x: 60*s, y: 60*s }, { x: 150*s, y: 60*s }, { x: 60*s, y: 150*s }, { x: 150*s, y: 150*s } ],
             blue: [ { x: 450*s, y: 60*s }, { x: 540*s, y: 60*s }, { x: 450*s, y: 150*s }, { x: 540*s, y: 150*s } ],
             yellow: [ { x: 450*s, y: 450*s }, { x: 540*s, y: 450*s }, { x: 450*s, y: 540*s }, { x: 540*s, y: 540*s } ]
         };
+    }
+
+    drawBoard() {
+        const board = document.getElementById('board');
+        board.innerHTML = '';
+        const s = this.boardContainer.getBoundingClientRect().width / this.boardSize;
+
+        const homeBases = {
+            red: { x: 0, y: this.boardSize * 0.6 * s },
+            green: { x: 0, y: 0 },
+            blue: { x: this.boardSize * 0.6 * s, y: 0 },
+            yellow: { x: this.boardSize * 0.6 * s, y: this.boardSize * 0.6 * s }
+        };
+
+        for (const color in homeBases) {
+            const base = document.createElement('div');
+            base.className = `home-base ${color}-base`;
+            base.style.left = `${homeBases[color].x}px`;
+            base.style.top = `${homeBases[color].y}px`;
+            base.style.width = `${this.boardSize * 0.4 * s}px`;
+            base.style.height = `${this.boardSize * 0.4 * s}px`;
+            board.appendChild(base);
+        }
+
+        this.path.forEach((p, i) => {
+            const cell = document.createElement('div');
+            cell.className = `path-cell ${this.safeSpots.includes(i) ? 'safe-spot' : ''}`;
+            cell.style.left = `${p.x * s}px`;
+            cell.style.top = `${p.y * s}px`;
+            cell.style.width = `${40 * s}px`;
+            cell.style.height = `${40 * s}px`;
+            if (this.safeSpots.includes(i)) {
+                cell.style.backgroundImage = 'radial-gradient(circle, white, transparent)';
+                cell.style.border = '2px solid gold';
+            }
+            board.appendChild(cell);
+        });
+
+        for (const color in this.homePaths) {
+            this.homePaths[color].forEach(p => {
+                const cell = document.createElement('div');
+                cell.className = `path-cell home-path-cell ${color}-path`;
+                cell.style.left = `${p.x * s}px`;
+                cell.style.top = `${p.y * s}px`;
+                cell.style.width = `${40 * s}px`;
+                cell.style.height = `${40 * s}px`;
+                board.appendChild(cell);
+            });
+        }
+
+        // Add central triangle
+        const triangle = document.createElement('div');
+        triangle.className = 'center-triangle';
+        triangle.style.position = 'absolute';
+        triangle.style.left = `${this.boardSize * 0.4 * s}px`;
+        triangle.style.top = `${this.boardSize * 0.4 * s}px`;
+        triangle.style.width = `${this.boardSize * 0.2 * s}px`;
+        triangle.style.height = `${this.boardSize * 0.2 * s}px`;
+        triangle.style.backgroundColor = 'white';
+        triangle.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+        board.appendChild(triangle);
     }
 
     drawPieces() {
@@ -174,27 +245,46 @@ class Game {
 
         setTimeout(() => {
             dice.classList.remove('rolling');
-            const rotations = {
-                1: 'rotateY(0deg)',
-                2: 'rotateY(-90deg)',
-                3: 'rotateY(-180deg)',
-                4: 'rotateY(90deg)',
-                5: 'rotateX(-90deg)',
-                6: 'rotateX(90deg)'
-            };
             dice.style.transform = rotations[this.diceRoll];
             this.result.textContent = `You rolled: ${this.diceRoll}`;
-            this.updateStatus(`${this.capitalize(this.currentPlayer)}'s turn. Rolled a ${this.diceRoll}. Click a piece to move.`);
-            this.highlightMovablePieces();
-            this.addPieceClickListeners();
+            this.updateStatus(`${this.capitalize(this.currentPlayer)} rolled a ${this.diceRoll}. Select a piece to move.`);
+            if (this.hasValidMoves()) {
+                this.highlightMovablePieces();
+                this.addPieceClickListeners();
+            } else {
+                this.updateStatus(`${this.capitalize(this.currentPlayer)} has no valid moves. Click Roll to continue.`);
+                this.rollBtn.addEventListener('click', () => this.endTurn(), { once: true });
+            }
         }, 1500);
+    }
+
+    hasValidMoves() {
+        const player = this.players[this.currentPlayer];
+        return player.pieces.some((pos, i) => this.isValidMove(pos, i));
+    }
+
+    isValidMove(pos, pieceIndex) {
+        const player = this.players[this.currentPlayer];
+        if (pos === 58) return false; // Finished pieces can't move
+        if (pos === -1 && this.diceRoll !== 6) return false; // Need 6 to start
+        if (pos === -1) return true; // Can start with 6
+        const homeEntry = player.homeEntryPos;
+        const distToHomeEntry = (homeEntry - pos + 52) % 52;
+        if (pos < 52 && this.diceRoll > distToHomeEntry) {
+            const homePathPos = 51 + (this.diceRoll - distToHomeEntry);
+            return homePathPos <= 58; // Valid if doesn't overshoot finish
+        }
+        if (pos >= 52) {
+            return pos + this.diceRoll <= 58; // Valid if doesn't overshoot finish in home path
+        }
+        return true; // Valid move on main path
     }
 
     highlightMovablePieces() {
         document.querySelectorAll('.piece.highlight').forEach(p => p.classList.remove('highlight'));
         const player = this.players[this.currentPlayer];
         player.pieces.forEach((pos, i) => {
-            if (pos !== 58) { // Not finished
+            if (this.isValidMove(pos, i)) {
                 const pieceElement = document.querySelector(`.piece[data-color="${this.currentPlayer}"][data-index="${i}"]`);
                 if (pieceElement) {
                     pieceElement.classList.add('highlight');
@@ -205,7 +295,7 @@ class Game {
 
     addPieceClickListeners() {
         document.querySelectorAll(`.${this.currentPlayer}-piece`).forEach(p => {
-            p.addEventListener('click', (e) => this.movePiece(e));
+            p.addEventListener('click', (e) => this.movePiece(e), { once: true });
         });
     }
 
@@ -224,7 +314,11 @@ class Game {
         const player = this.players[color];
         const currentPos = player.pieces[pieceIndex];
 
-        // From base
+        if (!this.isValidMove(currentPos, pieceIndex)) {
+            this.updateStatus('Invalid move! Select another piece.');
+            return;
+        }
+
         if (currentPos === -1) {
             if (this.diceRoll === 6) {
                 player.pieces[pieceIndex] = player.startPos;
@@ -236,25 +330,26 @@ class Game {
             return;
         }
 
-        // --- Main Path and Home Path Logic ---
         const homeEntry = player.homeEntryPos;
         const distToHomeEntry = (homeEntry - currentPos + 52) % 52;
 
-        if (currentPos < 52 && this.diceRoll > distToHomeEntry) { // Entering home path
+        if (currentPos < 52 && this.diceRoll > distToHomeEntry) {
             const homePathPos = 51 + (this.diceRoll - distToHomeEntry);
-            if (homePathPos < 58) {
+            if (homePathPos <= 58) {
                 player.pieces[pieceIndex] = homePathPos;
-            } else if (homePathPos === 58) {
-                player.pieces[pieceIndex] = 58; // Finished
+                if (homePathPos === 58) {
+                    this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span>'s piece reached the finish!`);
+                }
             }
-        } else if (currentPos >= 52) { // Already in home path
+        } else if (currentPos >= 52) {
             const newHomePos = currentPos + this.diceRoll;
-            if (newHomePos < 58) {
+            if (newHomePos <= 58) {
                 player.pieces[pieceIndex] = newHomePos;
-            } else if (newHomePos === 58) {
-                player.pieces[pieceIndex] = 58; // Finished
+                if (newHomePos === 58) {
+                    this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span>'s piece reached the finish!`);
+                }
             }
-        } else { // Standard move on main path
+        } else {
             const newPos = (currentPos + this.diceRoll) % 52;
             player.pieces[pieceIndex] = newPos;
             this.handleCapture(newPos, color);
@@ -272,7 +367,7 @@ class Game {
         this.winnerMessage.textContent = `${this.capitalize(winner)} Wins!`;
         this.gameOverOverlay.style.display = 'flex';
         this.rollBtn.disabled = true;
-        this.updateStatus(`Congratulations ${this.capitalize(winner)}!`);
+        this.updateStatus(`Congratulations <span style="color: ${winner};">${this.capitalize(winner)}</span>!`);
     }
 
     handleCapture(pos, attackerColor) {
@@ -282,14 +377,15 @@ class Game {
             if (color !== attackerColor) {
                 const player = this.players[color];
                 player.pieces = player.pieces.map(p => {
-                    if (p === pos) {
+                    if (p === pos && p < 52) { // Only capture on main path
                         this.updateStatus(`<span style="color: ${attackerColor};">${this.capitalize(attackerColor)}</span> captured <span style="color: ${color};">${this.capitalize(color)}</span>'s piece!`);
-                        return -1; // Send back to base
+                        return -1;
                     }
                     return p;
                 });
             }
         }
+        this.drawPieces(); // Update board immediately after capture
     }
 
     endTurn() {
@@ -302,10 +398,11 @@ class Game {
     }
 
     switchPlayer() {
+        const playerColors = Object.keys(this.players);
         if (this.diceRoll !== 6) {
-            const playerColors = Object.keys(this.players);
             const currentIndex = playerColors.indexOf(this.currentPlayer);
             this.currentPlayer = playerColors[(currentIndex + 1) % playerColors.length];
+            this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice.`);
         } else {
             this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn again! Roll the dice.`);
         }
@@ -314,61 +411,13 @@ class Game {
 
     updatePlayerTurnIndicator() {
         document.body.className = `current-player-${this.currentPlayer}`;
-         if (this.diceRoll !== 6) {
-            this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice.`);
-        }
     }
 
     updateStatus(message) {
         this.status.innerHTML = message;
     }
-
-    drawBoard() {
-        const board = document.getElementById('board');
-        board.innerHTML = ''; // Clear existing board
-        const s = this.boardContainer.getBoundingClientRect().width / this.boardSize;
-
-        const homeBases = {
-            red: { x: 0, y: this.boardSize * 0.6 * s },
-            green: { x: 0, y: 0 },
-            blue: { x: this.boardSize * 0.6 * s, y: 0 },
-            yellow: { x: this.boardSize * 0.6 * s, y: this.boardSize * 0.6 * s }
-        };
-
-        for (const color in homeBases) {
-            const base = document.createElement('div');
-            base.className = `home-base ${color}-base`;
-            base.style.left = `${homeBases[color].x}px`;
-            base.style.top = `${homeBases[color].y}px`;
-            base.style.width = `${this.boardSize * 0.4 * s}px`;
-            base.style.height = `${this.boardSize * 0.4 * s}px`;
-            board.appendChild(base);
-        }
-
-        this.path.forEach(p => {
-            const cell = document.createElement('div');
-            cell.className = 'path-cell';
-            cell.style.left = `${p.x * s}px`;
-            cell.style.top = `${p.y * s}px`;
-            cell.style.width = `${40 * s}px`;
-            cell.style.height = `${40 * s}px`;
-            board.appendChild(cell);
-        });
-
-        for (const color in this.homePaths) {
-            this.homePaths[color].forEach(p => {
-                const cell = document.createElement('div');
-                cell.className = `path-cell home-path-cell ${color}-path`;
-                cell.style.left = `${p.x * s}px`;
-                cell.style.top = `${p.y * s}px`;
-                cell.style.width = `${40 * s}px`;
-                cell.style.height = `${40 * s}px`;
-                board.appendChild(cell);
-            });
-        }
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const startScreen = new StartScreen();
+    new StartScreen();
 });
