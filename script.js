@@ -58,6 +58,7 @@ class Game {
         this.gameover = false;
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.boardSize = 600;
+        this.cellSize = 40; // 40px cells
         this.path = this.generatePath();
         this.homePaths = this.generateHomePaths();
         this.homeBaseCoords = this.generateHomeBaseCoords();
@@ -102,34 +103,34 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        // Red Path (bottom, positions 0-11)
-        p[0] = { x: 270*s, y: 550*s }; // Red start (0), adjusted to fix offset
-        p[1] = { x: 240*s, y: 550*s }; p[2] = { x: 240*s, y: 510*s }; p[3] = { x: 240*s, y: 470*s }; p[4] = { x: 240*s, y: 430*s };
-        p[5] = { x: 240*s, y: 390*s }; p[6] = { x: 190*s, y: 350*s }; p[7] = { x: 150*s, y: 350*s }; p[8] = { x: 110*s, y: 350*s };
-        p[9] = { x: 70*s, y: 350*s }; p[10] = { x: 30*s, y: 350*s }; p[11] = { x: 30*s, y: 310*s };
-        // Green Path (left, positions 12-23)
-        p[12] = { x: 30*s, y: 270*s }; // Adjusted for Green start (13)
-        p[13] = { x: 30*s, y: 230*s }; // Green start (13)
-        p[14] = { x: 70*s, y: 230*s }; p[15] = { x: 110*s, y: 230*s }; p[16] = { x: 150*s, y: 230*s };
-        p[17] = { x: 190*s, y: 230*s }; p[18] = { x: 230*s, y: 190*s }; p[19] = { x: 230*s, y: 150*s };
-        p[20] = { x: 230*s, y: 110*s }; p[21] = { x: 230*s, y: 70*s }; p[22] = { x: 230*s, y: 30*s };
-        p[23] = { x: 270*s, y: 30*s };
-        // Blue Path (top, positions 24-35)
-        p[24] = { x: 310*s, y: 30*s }; // Adjusted for Blue start (26)
-        p[25] = { x: 350*s, y: 30*s }; // Blue start (26)
-        p[26] = { x: 350*s, y: 70*s }; p[27] = { x: 350*s, y: 110*s }; p[28] = { x: 350*s, y: 150*s };
-        p[29] = { x: 350*s, y: 190*s }; p[30] = { x: 390*s, y: 230*s }; p[31] = { x: 430*s, y: 230*s };
-        p[32] = { x: 470*s, y: 230*s }; p[33] = { x: 510*s, y: 230*s }; p[34] = { x: 550*s, y: 230*s };
-        p[35] = { x: 550*s, y: 270*s };
-        // Yellow Path (right, positions 36-47)
-        p[36] = { x: 550*s, y: 310*s }; // Adjusted for Yellow start (39)
-        p[37] = { x: 550*s, y: 350*s }; // Yellow start (39)
-        p[38] = { x: 510*s, y: 350*s }; p[39] = { x: 470*s, y: 350*s }; p[40] = { x: 430*s, y: 350*s };
-        p[41] = { x: 390*s, y: 350*s }; p[42] = { x: 350*s, y: 390*s }; p[43] = { x: 350*s, y: 430*s };
-        p[44] = { x: 350*s, y: 470*s }; p[45] = { x: 350*s, y: 510*s }; p[46] = { x: 350*s, y: 550*s };
-        p[47] = { x: 310*s, y: 550*s };
+        // Grid-based coordinates (0,0) at top-left, (600,600) at bottom-right, adjusted for 10px border
+        // Red starts at bottom center (position 0), clockwise
+        p[0] = { x: 300 * s, y: 570 * s }; // Red start (0), center of bottom row
+        p[1] = { x: 260 * s, y: 570 * s }; p[2] = { x: 220 * s, y: 570 * s }; p[3] = { x: 180 * s, y: 570 * s };
+        p[4] = { x: 140 * s, y: 570 * s }; p[5] = { x: 100 * s, y: 530 * s }; p[6] = { x: 100 * s, y: 490 * s };
+        p[7] = { x: 100 * s, y: 450 * s }; p[8] = { x: 100 * s, y: 410 * s }; p[9] = { x: 100 * s, y: 370 * s };
+        p[10] = { x: 100 * s, y: 330 * s }; p[11] = { x: 100 * s, y: 290 * s };
+        // Green starts at left center (position 13)
+        p[12] = { x: 60 * s, y: 290 * s }; p[13] = { x: 60 * s, y: 250 * s }; // Green start (13)
+        p[14] = { x: 100 * s, y: 250 * s }; p[15] = { x: 140 * s, y: 250 * s }; p[16] = { x: 180 * s, y: 250 * s };
+        p[17] = { x: 220 * s, y: 250 * s }; p[18] = { x: 260 * s, y: 210 * s }; p[19] = { x: 260 * s, y: 170 * s };
+        p[20] = { x: 260 * s, y: 130 * s }; p[21] = { x: 260 * s, y: 90 * s }; p[22] = { x: 260 * s, y: 50 * s };
+        p[23] = { x: 300 * s, y: 50 * s };
+        // Blue starts at top center (position 26)
+        p[24] = { x: 340 * s, y: 50 * s }; p[25] = { x: 380 * s, y: 50 * s }; // Blue start (26)
+        p[26] = { x: 420 * s, y: 50 * s }; p[27] = { x: 460 * s, y: 50 * s }; p[28] = { x: 500 * s, y: 50 * s };
+        p[29] = { x: 540 * s, y: 90 * s }; p[30] = { x: 540 * s, y: 130 * s }; p[31] = { x: 540 * s, y: 170 * s };
+        p[32] = { x: 540 * s, y: 210 * s }; p[33] = { x: 540 * s, y: 250 * s }; p[34] = { x: 540 * s, y: 290 * s };
+        p[35] = { x: 540 * s, y: 330 * s };
+        // Yellow starts at right center (position 39)
+        p[36] = { x: 540 * s, y: 370 * s }; p[37] = { x: 540 * s, y: 410 * s }; // Yellow start (39)
+        p[38] = { x: 500 * s, y: 410 * s }; p[39] = { x: 460 * s, y: 410 * s }; p[40] = { x: 420 * s, y: 410 * s };
+        p[41] = { x: 380 * s, y: 410 * s }; p[42] = { x: 340 * s, y: 450 * s }; p[43] = { x: 340 * s, y: 490 * s };
+        p[44] = { x: 340 * s, y: 530 * s }; p[45] = { x: 340 * s, y: 570 * s }; p[46] = { x: 300 * s, y: 570 * s };
+        p[47] = { x: 260 * s, y: 570 * s };
         // Complete the circle (positions 48-51)
-        p[48] = { x: 270*s, y: 550*s }; p[49] = { x: 270*s, y: 510*s }; p[50] = { x: 270*s, y: 470*s }; p[51] = { x: 270*s, y: 430*s };
+        p[48] = { x: 220 * s, y: 570 * s }; p[49] = { x: 180 * s, y: 570 * s }; p[50] = { x: 140 * s, y: 570 * s };
+        p[51] = { x: 100 * s, y: 570 * s };
         return p;
     }
 
@@ -137,24 +138,20 @@ class Game {
         const s = this.boardSize / 600;
         return {
             red: [
-                { x: 270*s, y: 510*s }, // Adjusted to align with path
-                { x: 270*s, y: 470*s }, { x: 270*s, y: 430*s }, { x: 270*s, y: 390*s },
-                { x: 270*s, y: 350*s }, { x: 270*s, y: 310*s }
+                { x: 300 * s, y: 510 * s }, { x: 300 * s, y: 470 * s }, { x: 300 * s, y: 430 * s },
+                { x: 300 * s, y: 390 * s }, { x: 300 * s, y: 350 * s }, { x: 300 * s, y: 310 * s }
             ],
             green: [
-                { x: 70*s, y: 270*s }, // Adjusted to align with path
-                { x: 110*s, y: 270*s }, { x: 150*s, y: 270*s }, { x: 190*s, y: 270*s },
-                { x: 230*s, y: 270*s }, { x: 270*s, y: 270*s }
+                { x: 100 * s, y: 290 * s }, { x: 140 * s, y: 290 * s }, { x: 180 * s, y: 290 * s },
+                { x: 220 * s, y: 290 * s }, { x: 260 * s, y: 290 * s }, { x: 300 * s, y: 290 * s }
             ],
             blue: [
-                { x: 310*s, y: 70*s }, // Adjusted to align with path
-                { x: 310*s, y: 110*s }, { x: 310*s, y: 150*s }, { x: 310*s, y: 190*s },
-                { x: 310*s, y: 230*s }, { x: 310*s, y: 270*s }
+                { x: 380 * s, y: 90 * s }, { x: 380 * s, y: 130 * s }, { x: 380 * s, y: 170 * s },
+                { x: 380 * s, y: 210 * s }, { x: 380 * s, y: 250 * s }, { x: 380 * s, y: 290 * s }
             ],
             yellow: [
-                { x: 510*s, y: 310*s }, // Adjusted to align with path
-                { x: 470*s, y: 310*s }, { x: 430*s, y: 310*s }, { x: 390*s, y: 310*s },
-                { x: 350*s, y: 310*s }, { x: 310*s, y: 310*s }
+                { x: 500 * s, y: 370 * s }, { x: 460 * s, y: 370 * s }, { x: 420 * s, y: 370 * s },
+                { x: 380 * s, y: 370 * s }, { x: 340 * s, y: 370 * s }, { x: 300 * s, y: 370 * s }
             ]
         };
     }
@@ -163,20 +160,20 @@ class Game {
         const s = this.boardSize / 600;
         return {
             red: [
-                { x: 60*s, y: 450*s }, { x: 150*s, y: 450*s },
-                { x: 60*s, y: 540*s }, { x: 150*s, y: 540*s }
+                { x: 60 * s, y: 450 * s }, { x: 150 * s, y: 450 * s },
+                { x: 60 * s, y: 540 * s }, { x: 150 * s, y: 540 * s }
             ],
             green: [
-                { x: 60*s, y: 60*s }, { x: 150*s, y: 60*s },
-                { x: 60*s, y: 150*s }, { x: 150*s, y: 150*s }
+                { x: 60 * s, y: 60 * s }, { x: 150 * s, y: 60 * s },
+                { x: 60 * s, y: 150 * s }, { x: 150 * s, y: 150 * s }
             ],
             blue: [
-                { x: 450*s, y: 60*s }, { x: 540*s, y: 60*s },
-                { x: 450*s, y: 150*s }, { x: 540*s, y: 150*s }
+                { x: 450 * s, y: 60 * s }, { x: 540 * s, y: 60 * s },
+                { x: 450 * s, y: 150 * s }, { x: 540 * s, y: 150 * s }
             ],
             yellow: [
-                { x: 450*s, y: 450*s }, { x: 540*s, y: 450*s },
-                { x: 450*s, y: 540*s }, { x: 540*s, y: 540*s }
+                { x: 450 * s, y: 450 * s }, { x: 540 * s, y: 450 * s },
+                { x: 450 * s, y: 540 * s }, { x: 540 * s, y: 540 * s }
             ]
         };
     }
@@ -206,10 +203,10 @@ class Game {
         this.path.forEach((p, i) => {
             const cell = document.createElement('div');
             cell.className = `path-cell ${this.safeSpots.includes(i) ? 'safe-spot' : ''}`;
-            cell.style.left = `${p.x * s}px`;
-            cell.style.top = `${p.y * s}px`;
-            cell.style.width = `${40 * s}px`;
-            cell.style.height = `${40 * s}px`;
+            cell.style.left = `${p.x}px`; // Use raw coordinates for alignment
+            cell.style.top = `${p.y}px`;
+            cell.style.width = `${this.cellSize * s}px`;
+            cell.style.height = `${this.cellSize * s}px`;
             board.appendChild(cell);
         });
 
@@ -217,11 +214,11 @@ class Game {
             this.homePaths[color].forEach((p, i) => {
                 const cell = document.createElement('div');
                 cell.className = `path-cell home-path-cell ${color}-path`;
-                cell.style.left = `${p.x * s}px`;
-                cell.style.top = `${p.y * s}px`;
-                cell.style.width = `${40 * s}px`;
-                cell.style.height = `${40 * s}px`;
-                if (i === 5) { // Last cell in home path (finish)
+                cell.style.left = `${p.x}px`; // Use raw coordinates
+                cell.style.top = `${p.y}px`;
+                cell.style.width = `${this.cellSize * s}px`;
+                cell.style.height = `${this.cellSize * s}px`;
+                if (i === 5) {
                     cell.style.backgroundColor = `var(--${color})`;
                     cell.style.border = '2px solid var(--text-dark)';
                 }
@@ -261,9 +258,9 @@ class Game {
                 }
                 piece.style.left = `${coords.x * scale}px`;
                 piece.style.top = `${coords.y * scale}px`;
-                piece.style.transform = 'translate(-50%, -50%)';
+                piece.style.transform = `translate(-${this.cellSize * s / 2}px, -${this.cellSize * s / 2}px)`; // Precise centering
                 this.boardContainer.appendChild(piece);
-                console.log(`${color} piece ${i}: pos=${pos}, coords=(${coords.x * scale}, ${coords.y * scale})`);
+                console.log(`${color} piece ${i}: pos=${pos}, intended=(${coords.x}, ${coords.y}), rendered=(${coords.x * scale}, ${coords.y * scale})`);
             });
         }
     }
