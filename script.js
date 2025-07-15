@@ -370,6 +370,6 @@ class Game {
     }
 }
 
-new StartScreen(numPlayers => {
+const startScreen = new StartScreen(numPlayers => {
     new Game(numPlayers);
 });
