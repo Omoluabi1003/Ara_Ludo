@@ -1,13 +1,13 @@
 :root {
-    --board-bg: #f1f1f1;
-    --cell-bg: #fff;
-    --safe-bg: #d4edda;
-    --red: #d9534f;
-    --green: #5cb85c;
-    --blue: #428bca;
-    --yellow: #f0ad4e;
-    --text-dark: #333;
-    --text-light: #fff;
+    --board-bg: #2c3e50;
+    --cell-bg: #ecf0f1;
+    --safe-bg: #34495e;
+    --red: #e74c3c;
+    --green: #2ecc71;
+    --blue: #3498db;
+    --yellow: #f1c40f;
+    --text-dark: #2c3e50;
+    --text-light: #ecf0f1;
     --font-primary: 'Poppins', sans-serif;
 }
 
@@ -15,13 +15,12 @@ body {
     font-family: var(--font-primary);
     text-align: center;
     background-color: var(--board-bg);
-    color: var(--text-dark);
+    color: var(--text-light);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.19' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 #game-container {
@@ -35,7 +34,7 @@ body {
     position: relative;
     width: 600px;
     height: 600px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     border-radius: 15px;
     overflow: hidden;
 }
@@ -43,9 +42,34 @@ body {
 #board {
     width: 100%;
     height: 100%;
-    background-image: url('ludo.png');
-    background-size: cover;
+    background-color: var(--safe-bg);
+    border: 10px solid #2c3e50;
+    box-sizing: border-box;
+    position: relative;
 }
+
+.home-base {
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.red-base { background-color: rgba(231, 76, 60, 0.3); }
+.green-base { background-color: rgba(46, 204, 113, 0.3); }
+.blue-base { background-color: rgba(52, 152, 219, 0.3); }
+.yellow-base { background-color: rgba(241, 196, 15, 0.3); }
+
+.path-cell {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,0.15);
+    background-color: rgba(255,255,255,0.1);
+}
+
+.home-path-cell.red-path { background-color: rgba(231, 76, 60, 0.3); }
+.home-path-cell.green-path { background-color: rgba(46, 204, 113, 0.3); }
+.home-path-cell.blue-path { background-color: rgba(52, 152, 219, 0.3); }
+.home-path-cell.yellow-path { background-color: rgba(241, 196, 15, 0.3); }
 
 .piece {
     width: 40px;
@@ -58,21 +82,25 @@ body {
     font-weight: bold;
     color: var(--text-light);
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    border: 4px solid rgba(255,255,255,0.5);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    transition: all 0.3s ease-in-out;
+    border: 3px solid rgba(0,0,0,0.3);
+    box-shadow:
+        inset 0 -4px 8px rgba(0,0,0,0.4),
+        0 4px 12px rgba(0,0,0,0.4);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-.red-piece { background: radial-gradient(circle, #ff7e79, var(--red)); }
-.green-piece { background: radial-gradient(circle, #7de27d, var(--green)); }
-.blue-piece { background: radial-gradient(circle, #6caeff, var(--blue)); }
-.yellow-piece { background: radial-gradient(circle, #f5d37e, var(--yellow)); }
+.red-piece { background: radial-gradient(circle at 50% 120%, var(--red), #c0392b); }
+.green-piece { background: radial-gradient(circle at 50% 120%, var(--green), #27ae60); }
+.blue-piece { background: radial-gradient(circle at 50% 120%, var(--blue), #2980b9); }
+.yellow-piece { background: radial-gradient(circle at 50% 120%, var(--yellow), #f39c12); }
 
 .piece.highlight {
-    transform: scale(1.2);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
-    border-color: #fff;
+    transform: scale(1.2) translateY(-5px);
+    box-shadow:
+        inset 0 -5px 12px rgba(0,0,0,0.5),
+        0 10px 20px rgba(0,0,0,0.5);
+    border-color: rgba(255, 255, 255, 0.8);
 }
 
 #controls {
@@ -81,21 +109,31 @@ body {
     align-items: center;
     gap: 25px;
     padding: 30px;
-    background-color: var(--cell-bg);
+    background-color: var(--safe-bg);
     border-radius: 15px;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     width: 280px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 #controls h1 {
     font-size: 2.5em;
-    color: var(--blue);
+    color: var(--text-light);
     margin: 0;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 #dice-container {
     perspective: 1000px;
+}
+
+@keyframes roll {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    20% { transform: rotateX(360deg) rotateY(360deg); }
+    40% { transform: rotateX(720deg) rotateY(720deg); }
+    60% { transform: rotateX(1080deg) rotateY(1080deg); }
+    80% { transform: rotateX(1440deg) rotateY(1440deg); }
+    100% { transform: rotateX(1800deg) rotateY(1800deg); }
 }
 
 #dice {
@@ -103,15 +141,20 @@ body {
     height: 60px;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 1s;
+    transition: transform 1.5s cubic-bezier(0.3, 1.5, 0.7, 1);
+}
+
+.rolling {
+    animation: roll 1.5s ease-out;
 }
 
 .dice-face {
     position: absolute;
     width: 60px;
     height: 60px;
-    background: #fff;
-    border: 2px solid #ccc;
+    background: var(--cell-bg);
+    border: 2px solid var(--text-dark);
+    border-radius: 8px;
     font-size: 30px;
     display: flex;
     justify-content: center;
@@ -132,11 +175,13 @@ button#roll {
     font-size: 24px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(145deg, var(--blue), #367abc);
+    background: linear-gradient(145deg, var(--green), #27ae60);
     color: var(--text-light);
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 button#roll:hover {
@@ -152,26 +197,26 @@ button#roll:active {
 #result {
     font-size: 26px;
     font-weight: bold;
-    color: var(--text-dark);
+    color: var(--text-light);
 }
 
 #status {
     font-size: 18px;
-    color: #555;
+    color: var(--text-light);
     min-height: 80px;
     font-style: normal;
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: rgba(0,0,0,0.2);
     border-radius: 8px;
-    border: 1px solid #eee;
+    border: 1px solid rgba(255,255,255,0.1);
     width: 100%;
     line-height: 1.5;
 }
 
-.current-player-red #controls h1 { color: var(--red); }
-.current-player-green #controls h1 { color: var(--green); }
-.current-player-blue #controls h1 { color: var(--blue); }
-.current-player-yellow #controls h1 { color: var(--yellow); }
+.current-player-red #controls h1 { color: var(--red); text-shadow: 0 0 10px var(--red); }
+.current-player-green #controls h1 { color: var(--green); text-shadow: 0 0 10px var(--green); }
+.current-player-blue #controls h1 { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
+.current-player-yellow #controls h1 { color: var(--yellow); text-shadow: 0 0 10px var(--yellow); }
 
 #game-over-overlay {
     position: absolute;
@@ -179,7 +224,7 @@ button#roll:active {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     display: none;
     flex-direction: column;
@@ -188,6 +233,7 @@ button#roll:active {
     text-align: center;
     font-size: 2em;
     z-index: 100;
+    backdrop-filter: blur(5px);
 }
 
 #game-over-overlay h2 {
@@ -199,6 +245,61 @@ button#roll:active {
 #game-over-overlay p {
     font-size: 1.5em;
     margin-top: 20px;
+}
+
+#start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--board-bg);
+    color: var(--text-light);
+}
+
+#start-screen h2 {
+    font-size: 3.5em;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+#player-selection {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.player-option {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: 2px solid var(--text-light);
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.player-option.selected,
+.player-option:hover {
+    background-color: var(--blue);
+    color: var(--text-light);
+}
+
+#start-game {
+    padding: 20px 40px;
+    font-size: 1.5em;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--green);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#start-game:hover {
+    background-color: #27ae60;
 }
 
 @media (max-width: 950px) {
