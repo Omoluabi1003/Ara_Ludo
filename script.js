@@ -262,8 +262,8 @@ class Game {
     rollDice() {
         if (this.gameover) return;
         this.diceRoll = Math.floor(Math.random() * 6) + 1;
-        console.log(`Generated roll: ${this.diceRoll}`); // Initial roll
-        console.log(`Before UI update: diceRoll=${this.diceRoll}`); // Before animation
+        console.log(`Generated roll: ${this.diceRoll}`);
+        console.log(`Before UI update: diceRoll=${this.diceRoll}`);
 
         const dice = document.getElementById('dice');
         const rotations = {
@@ -278,10 +278,10 @@ class Game {
         dice.classList.add('rolling');
 
         setTimeout(() => {
-            console.log(`After animation: diceRoll=${this.diceRoll}`); // After animation
+            console.log(`After animation: diceRoll=${this.diceRoll}`);
             dice.classList.remove('rolling');
             dice.style.transform = rotations[this.diceRoll];
-            this.result.textContent = `You rolled: ${this.diceRoll}`; // Explicit display
+            this.result.textContent = `You rolled: ${this.diceRoll}`;
             this.updateStatus(`${this.capitalize(this.currentPlayer)} rolled a ${this.diceRoll}. Select a piece to move.`);
             if (this.hasValidMoves()) {
                 this.highlightMovablePieces();
