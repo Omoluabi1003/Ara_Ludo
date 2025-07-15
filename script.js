@@ -103,13 +103,13 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        // Grid-based coordinates, 40px cells, 10px border, centered on cells
+        // Grid-based coordinates, 40px cells, 10px border, centered on cell centers
         p[0] = { x: 300 * s, y: 570 * s }; // Red start (0), bottom center
         p[1] = { x: 260 * s, y: 570 * s }; p[2] = { x: 220 * s, y: 570 * s }; p[3] = { x: 180 * s, y: 570 * s };
         p[4] = { x: 140 * s, y: 570 * s }; p[5] = { x: 100 * s, y: 530 * s }; p[6] = { x: 100 * s, y: 490 * s };
         p[7] = { x: 100 * s, y: 450 * s }; p[8] = { x: 100 * s, y: 410 * s }; p[9] = { x: 100 * s, y: 370 * s };
-        p[10] = { x: 100 * s, y: 330 * s }; p[11] = { x: 100 * s, y: 290 * s };
-        p[12] = { x: 60 * s, y: 290 * s }; p[13] = { x: 60 * s, y: 250 * s }; // Green start (13)
+        p[10] = { x: 100 * s, y: 330 * s }; p[11] = { x: 60 * s, y: 290 * s };
+        p[12] = { x: 60 * s, y: 250 * s }; p[13] = { x: 60 * s, y: 250 * s }; // Green start (13), corrected to match cell
         p[14] = { x: 100 * s, y: 250 * s }; p[15] = { x: 140 * s, y: 250 * s }; p[16] = { x: 180 * s, y: 250 * s };
         p[17] = { x: 220 * s, y: 250 * s }; p[18] = { x: 260 * s, y: 210 * s }; p[19] = { x: 260 * s, y: 170 * s };
         p[20] = { x: 260 * s, y: 130 * s }; p[21] = { x: 260 * s, y: 90 * s }; p[22] = { x: 260 * s, y: 50 * s };
@@ -118,12 +118,12 @@ class Game {
         p[27] = { x: 460 * s, y: 50 * s }; p[28] = { x: 500 * s, y: 50 * s }; p[29] = { x: 540 * s, y: 90 * s };
         p[30] = { x: 540 * s, y: 130 * s }; p[31] = { x: 540 * s, y: 170 * s }; p[32] = { x: 540 * s, y: 210 * s };
         p[33] = { x: 540 * s, y: 250 * s }; p[34] = { x: 540 * s, y: 290 * s }; p[35] = { x: 540 * s, y: 330 * s };
-        p[36] = { x: 540 * s, y: 370 * s }; p[37] = { x: 540 * s, y: 410 * s }; p[38] = { x: 500 * s, y: 410 * s };
-        p[39] = { x: 460 * s, y: 410 * s }; // Yellow start (39)
-        p[40] = { x: 420 * s, y: 410 * s }; p[41] = { x: 380 * s, y: 410 * s }; p[42] = { x: 340 * s, y: 450 * s };
-        p[43] = { x: 340 * s, y: 490 * s }; p[44] = { x: 340 * s, y: 530 * s }; p[45] = { x: 340 * s, y: 570 * s };
-        p[46] = { x: 300 * s, y: 570 * s }; p[47] = { x: 260 * s, y: 570 * s }; p[48] = { x: 220 * s, y: 570 * s };
-        p[49] = { x: 180 * s, y: 570 * s }; p[50] = { x: 140 * s, y: 570 * s }; p[51] = { x: 100 * s, y: 570 * s };
+        p[36] = { x: 540 * s, y: 370 * s }; p[37] = { x: 500 * s, y: 410 * s }; p[38] = { x: 460 * s, y: 410 * s };
+        p[39] = { x: 420 * s, y: 410 * s }; // Yellow start (39)
+        p[40] = { x: 380 * s, y: 410 * s }; p[41] = { x: 340 * s, y: 450 * s }; p[42] = { x: 340 * s, y: 490 * s };
+        p[43] = { x: 340 * s, y: 530 * s }; p[44] = { x: 340 * s, y: 570 * s }; p[45] = { x: 300 * s, y: 570 * s };
+        p[46] = { x: 260 * s, y: 570 * s }; p[47] = { x: 220 * s, y: 570 * s }; p[48] = { x: 180 * s, y: 570 * s };
+        p[49] = { x: 140 * s, y: 570 * s }; p[50] = { x: 100 * s, y: 570 * s }; p[51] = { x: 60 * s, y: 570 * s };
         return p;
     }
 
@@ -196,8 +196,8 @@ class Game {
         this.path.forEach((p, i) => {
             const cell = document.createElement('div');
             cell.className = `path-cell ${this.safeSpots.includes(i) ? 'safe-spot' : ''}`;
-            cell.style.left = `${p.x}px`;
-            cell.style.top = `${p.y}px`;
+            cell.style.left = `${Math.round(p.x)}px`; // Round for pixel-perfect alignment
+            cell.style.top = `${Math.round(p.y)}px`;
             cell.style.width = `${this.cellSize * s}px`;
             cell.style.height = `${this.cellSize * s}px`;
             board.appendChild(cell);
@@ -207,8 +207,8 @@ class Game {
             this.homePaths[color].forEach((p, i) => {
                 const cell = document.createElement('div');
                 cell.className = `path-cell home-path-cell ${color}-path`;
-                cell.style.left = `${p.x}px`;
-                cell.style.top = `${p.y}px`;
+                cell.style.left = `${Math.round(p.x)}px`;
+                cell.style.top = `${Math.round(p.y)}px`;
                 cell.style.width = `${this.cellSize * s}px`;
                 cell.style.height = `${this.cellSize * s}px`;
                 if (i === 5) {
@@ -250,11 +250,11 @@ class Game {
                 } else {
                     coords = this.path[pos];
                 }
-                piece.style.left = `${coords.x * s}px`;
-                piece.style.top = `${coords.y * s}px`;
-                piece.style.transform = `translate(-${this.cellSize * s / 2}px, -${this.cellSize * s / 2}px)`;
+                piece.style.left = `${Math.round(coords.x * s)}px`; // Round for alignment
+                piece.style.top = `${Math.round(coords.y * s)}px`;
+                piece.style.transform = `translate(-${Math.round(this.cellSize * s / 2)}px, -${Math.round(this.cellSize * s / 2)}px)`;
                 this.boardContainer.appendChild(piece);
-                console.log(`${color} piece ${i}: pos=${pos}, coords=(${coords.x * s}, ${coords.y * s})`);
+                console.log(`${color} piece ${i}: pos=${pos}, coords=(${Math.round(coords.x * s)}, ${Math.round(coords.y * s)})`);
             });
         }
     }
@@ -262,7 +262,8 @@ class Game {
     rollDice() {
         if (this.gameover) return;
         this.diceRoll = Math.floor(Math.random() * 6) + 1;
-        console.log(`Rolled: ${this.diceRoll}`); // Debug roll value
+        console.log(`Generated roll: ${this.diceRoll}`); // Log initial roll
+        console.log(`Before UI update: diceRoll=${this.diceRoll}`); // Verify before timeout
 
         const dice = document.getElementById('dice');
         const rotations = {
@@ -277,9 +278,10 @@ class Game {
         dice.classList.add('rolling');
 
         setTimeout(() => {
+            console.log(`After animation: diceRoll=${this.diceRoll}`); // Verify after timeout
             dice.classList.remove('rolling');
             dice.style.transform = rotations[this.diceRoll];
-            this.result.textContent = `You rolled: ${this.diceRoll}`; // Ensure UI reflects correct roll
+            this.result.textContent = `You rolled: ${this.diceRoll}`;
             this.updateStatus(`${this.capitalize(this.currentPlayer)} rolled a ${this.diceRoll}. Select a piece to move.`);
             if (this.hasValidMoves()) {
                 this.highlightMovablePieces();
@@ -351,7 +353,7 @@ class Game {
         const player = this.players[color];
         const currentPos = player.tokens[tokenIndex];
 
-        console.log(`Attempting move: color=${color}, token=${tokenIndex}, pos=${currentPos}, roll=${this.diceRoll}`); // Debug
+        console.log(`Move attempt: color=${color}, token=${tokenIndex}, pos=${currentPos}, roll=${this.diceRoll}`); // Debug roll
         if (!this.isValidMove(currentPos, tokenIndex)) {
             this.updateStatus('Invalid move! Select another piece.');
             return;
