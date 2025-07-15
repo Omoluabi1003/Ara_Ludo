@@ -80,7 +80,6 @@ class Game {
             this.drawPieces();
         });
 
-        // Add restart button to game-over overlay
         const restartBtn = document.createElement('button');
         restartBtn.textContent = 'Restart Game';
         restartBtn.id = 'restart-game';
@@ -103,16 +102,24 @@ class Game {
     generatePath() {
         const s = this.boardSize / 600;
         const p = [];
-        p.push({ x: 240*s, y: 550*s }); p.push({ x: 240*s, y: 510*s }); p.push({ x: 240*s, y: 470*s }); p.push({ x: 240*s, y: 430*s }); p.push({ x: 240*s, y: 390*s });
+        // Red Path (bottom, starting at position 0)
+        p.push({ x: 240*s, y: 550*s }); // Red start (0)
+        p.push({ x: 240*s, y: 510*s }); p.push({ x: 240*s, y: 470*s }); p.push({ x: 240*s, y: 430*s }); p.push({ x: 240*s, y: 390*s });
         p.push({ x: 190*s, y: 350*s }); p.push({ x: 150*s, y: 350*s }); p.push({ x: 110*s, y: 350*s }); p.push({ x: 70*s, y: 350*s }); p.push({ x: 30*s, y: 350*s });
         p.push({ x: 30*s, y: 310*s }); p.push({ x: 30*s, y: 270*s });
-        p.push({ x: 30*s, y: 230*s }); p.push({ x: 70*s, y: 230*s }); p.push({ x: 110*s, y: 230*s }); p.push({ x: 150*s, y: 230*s }); p.push({ x: 190*s, y: 230*s });
+        // Green Path (left, starting at position 13)
+        p.push({ x: 30*s, y: 230*s }); // Green start (13)
+        p.push({ x: 70*s, y: 230*s }); p.push({ x: 110*s, y: 230*s }); p.push({ x: 150*s, y: 230*s }); p.push({ x: 190*s, y: 230*s });
         p.push({ x: 230*s, y: 190*s }); p.push({ x: 230*s, y: 150*s }); p.push({ x: 230*s, y: 110*s }); p.push({ x: 230*s, y: 70*s }); p.push({ x: 230*s, y: 30*s });
         p.push({ x: 270*s, y: 30*s }); p.push({ x: 310*s, y: 30*s });
-        p.push({ x: 350*s, y: 30*s }); p.push({ x: 350*s, y: 70*s }); p.push({ x: 350*s, y: 110*s }); p.push({ x: 350*s, y: 150*s }); p.push({ x: 350*s, y: 190*s });
+        // Blue Path (top, starting at position 26)
+        p.push({ x: 350*s, y: 30*s }); // Blue start (26)
+        p.push({ x: 350*s, y: 70*s }); p.push({ x: 350*s, y: 110*s }); p.push({ x: 350*s, y: 150*s }); p.push({ x: 350*s, y: 190*s });
         p.push({ x: 390*s, y: 230*s }); p.push({ x: 430*s, y: 230*s }); p.push({ x: 470*s, y: 230*s }); p.push({ x: 510*s, y: 230*s }); p.push({ x: 550*s, y: 230*s });
         p.push({ x: 550*s, y: 270*s }); p.push({ x: 550*s, y: 310*s });
-        p.push({ x: 550*s, y: 350*s }); p.push({ x: 510*s, y: 350*s }); p.push({ x: 470*s, y: 350*s }); p.push({ x: 430*s, y: 350*s }); p.push({ x: 390*s, y: 350*s });
+        // Yellow Path (right, starting at position 39)
+        p.push({ x: 550*s, y: 350*s }); // Yellow start (39)
+        p.push({ x: 510*s, y: 350*s }); p.push({ x: 470*s, y: 350*s }); p.push({ x: 430*s, y: 350*s }); p.push({ x: 390*s, y: 350*s });
         p.push({ x: 350*s, y: 390*s }); p.push({ x: 350*s, y: 430*s }); p.push({ x: 350*s, y: 470*s }); p.push({ x: 350*s, y: 510*s }); p.push({ x: 350*s, y: 550*s });
         p.push({ x: 310*s, y: 550*s }); p.push({ x: 270*s, y: 550*s });
         return p;
@@ -186,7 +193,6 @@ class Game {
             });
         }
 
-        // Add central triangle
         const triangle = document.createElement('div');
         triangle.className = 'center-triangle';
         triangle.style.position = 'absolute';
@@ -222,7 +228,10 @@ class Game {
                 }
                 piece.style.left = `${coords.x * scale}px`;
                 piece.style.top = `${coords.y * scale}px`;
+                piece.style.transform = 'translate(-50%, -50%)'; // Center piece on cell
                 this.boardContainer.appendChild(piece);
+                // Debug: Log position and coordinates
+                console.log(`${color} piece ${i}: pos=${pos}, coords=(${coords.x * scale}, ${coords.y * scale})`);
             });
         }
     }
@@ -265,19 +274,19 @@ class Game {
 
     isValidMove(pos, pieceIndex) {
         const player = this.players[this.currentPlayer];
-        if (pos === 58) return false; // Finished pieces can't move
-        if (pos === -1 && this.diceRoll !== 6) return false; // Need 6 to start
-        if (pos === -1) return true; // Can start with 6
+        if (pos === 58) return false;
+        if (pos === -1 && this.diceRoll !== 6) return false;
+        if (pos === -1) return true;
         const homeEntry = player.homeEntryPos;
         const distToHomeEntry = (homeEntry - pos + 52) % 52;
         if (pos < 52 && this.diceRoll > distToHomeEntry) {
             const homePathPos = 51 + (this.diceRoll - distToHomeEntry);
-            return homePathPos <= 58; // Valid if doesn't overshoot finish
+            return homePathPos <= 58;
         }
         if (pos >= 52) {
-            return pos + this.diceRoll <= 58; // Valid if doesn't overshoot finish in home path
+            return pos + this.diceRoll <= 58;
         }
-        return true; // Valid move on main path
+        return true;
     }
 
     highlightMovablePieces() {
@@ -322,7 +331,10 @@ class Game {
         if (currentPos === -1) {
             if (this.diceRoll === 6) {
                 player.pieces[pieceIndex] = player.startPos;
+                this.updateStatus(`<span style="color: ${color};">${this.capitalize(color)}</span> moved a piece to position ${player.startPos}!`);
+                console.log(`${color} piece ${pieceIndex} moved to startPos=${player.startPos}`); // Debug
                 this.handleCapture(player.startPos, color);
+                this.drawPieces(); // Immediate redraw
                 this.endTurn();
             } else {
                 this.updateStatus('You need a 6 to start.');
@@ -371,21 +383,25 @@ class Game {
     }
 
     handleCapture(pos, attackerColor) {
-        if (this.safeSpots.includes(pos)) return;
+        if (this.safeSpots.includes(pos)) {
+            console.log(`No capture at pos ${pos} (safe spot)`); // Debug
+            return;
+        }
 
         for (const color in this.players) {
             if (color !== attackerColor) {
                 const player = this.players[color];
                 player.pieces = player.pieces.map(p => {
-                    if (p === pos && p < 52) { // Only capture on main path
+                    if (p === pos && p < 52) {
                         this.updateStatus(`<span style="color: ${attackerColor};">${this.capitalize(attackerColor)}</span> captured <span style="color: ${color};">${this.capitalize(color)}</span>'s piece!`);
+                        console.log(`${attackerColor} captured ${color}'s piece at pos ${pos}`); // Debug
                         return -1;
                     }
                     return p;
                 });
             }
         }
-        this.drawPieces(); // Update board immediately after capture
+        this.drawPieces(); // Immediate redraw after capture
     }
 
     endTurn() {
