@@ -65,14 +65,18 @@ class Game {
         this.rollBtn = document.getElementById('roll');
         this.result = document.getElementById('result');
         this.status = document.getElementById('status');
+        this.scoreboard = document.getElementById('scoreboard');
         this.boardContainer = document.getElementById('board-container');
         this.gameOverOverlay = document.getElementById('game-over-overlay');
         this.winnerMessage = document.getElementById('winner-message');
+
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         this.rollBtn.addEventListener('click', () => this.rollDice());
         this.addSimulateButton();
         this.drawBoard();
         this.drawPieces();
+        this.updateScoreboard();
         this.updateStatus(`It's <span style="color: ${this.currentPlayer};">${this.capitalize(this.currentPlayer)}</span>'s turn. Roll the dice!`);
         this.updatePlayerTurnIndicator();
 
@@ -257,11 +261,13 @@ class Game {
                 console.log(`${color} piece ${i}: pos=${pos}, coords=(${Math.round(coords.x * s)}, ${Math.round(coords.y * s)})`);
             });
         }
+        this.updateScoreboard();
     }
 
     rollDice() {
         if (this.gameover) return;
         this.diceRoll = Math.floor(Math.random() * 6) + 1;
+        this.playDiceSound();
         console.log(`Generated roll: ${this.diceRoll}`);
         console.log(`Before UI update: diceRoll=${this.diceRoll}`);
 
@@ -434,6 +440,7 @@ class Game {
                 player.tokens = player.tokens.map((p, i) => {
                     if (typeof p === "number" && p === pos) {
                         this.updateStatus(`<span style="color: ${attackerColor};">${this.capitalize(attackerColor)}</span> captured <span style="color: ${color};">${this.capitalize(color)}</span>'s piece!`);
+                        this.playCaptureSound();
                         console.log(`${attackerColor} captured ${color}'s piece at pos ${pos}`);
                         return "base";
                     }
@@ -471,6 +478,39 @@ class Game {
 
     updateStatus(message) {
         this.status.innerHTML = message;
+    }
+
+    updateScoreboard() {
+        if (!this.scoreboard) return;
+        this.scoreboard.innerHTML = '';
+        const list = document.createElement('ul');
+        for (const color in this.players) {
+            const li = document.createElement('li');
+            li.innerHTML = `<span style="color:${color}">${this.capitalize(color)}</span>: ${this.players[color].completed}`;
+            list.appendChild(li);
+        }
+        this.scoreboard.appendChild(list);
+    }
+
+    playTone(freq, duration) {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+        osc.start();
+        osc.stop(this.audioCtx.currentTime + duration);
+    }
+
+    playDiceSound() {
+        this.playTone(700, 0.1);
+    }
+
+    playCaptureSound() {
+        this.playTone(300, 0.15);
+        setTimeout(() => this.playTone(500, 0.15), 150);
     }
 
     addSimulateButton() {
