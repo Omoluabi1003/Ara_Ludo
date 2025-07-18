@@ -230,6 +230,22 @@ button#roll:active {
     line-height: 1.5;
 }
 
+#scoreboard {
+    text-align: left;
+    margin-top: 10px;
+}
+
+#scoreboard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#scoreboard li {
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
 .current-player-red #controls h1 { color: var(--red); text-shadow: 0 0 10px var(--red); }
 .current-player-green #controls h1 { color: var(--green); text-shadow: 0 0 10px var(--green); }
 .current-player-blue #controls h1 { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
