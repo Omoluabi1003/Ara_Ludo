@@ -1,5 +1,19 @@
 # Ara Ludo
 
+## Project at a glance
+
+**Category:** Browser-based Nigerian Ludo game  
+**Purpose:** Provide local two-to-four-player Ludo gameplay and an installable browser experience  
+**Intended readers:** Users, developers and project evaluators  
+**Repository:** https://github.com/Omoluabi1003/Ara_Ludo
+
+**Implementation boundary:** Simulation features and offline support vary by browser and deployment method.
+
+The following sections provide the existing development and product details. Confirm live capabilities in source and deployed environments before treating roadmap items as delivered.
+
+---
+
+
 Ara Ludo is a browser-based Ludo game inspired by the classic Nigerian board game. The project is built with HTML, CSS and JavaScript and can run completely offline as a Progressive Web App.
 
 ## Features
